@@ -1,5 +1,5 @@
 from flask import render_template, url_for, flash, redirect, request
-from bookstore import app, db, bcrypt
+from bookstore import app, db
 
 posts =[
     {

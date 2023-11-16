@@ -1,0 +1,76 @@
+{% extends 'admin/master.html' %} {% block body %} {{ super() }}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-10 col-sm-offset-1">
+            <h1>Flask-Admin example</h1>
+            <p class="lead">Authentication</p>
+            <div style="height: 50vh; width: 100%">
+                <canvas id="myChart"></canvas>
+            </div>
+            <div style="color: red">{{arg1}}</div>
+            <p>
+                This example shows how you can use
+                <a
+                    href="https://pythonhosted.org/Flask-Security/index.html"
+                    target="_blank"
+                    >Flask-Security</a
+                >
+                for authentication.
+            </p>
+            {% if not current_user.is_authenticated %}
+            <p>
+                You can register as a regular user, or log in as a superuser
+                with the following credentials:
+            </p>
+            <ul>
+                <li>email: <b>admin@example.com</b></li>
+                <li>password: <b>admin</b></li>
+            </ul>
+            <p>
+                <a
+                    class="btn btn-primary"
+                    href="{{ url_for('security.login') }}"
+                    >login</a
+                >
+                <a
+                    class="btn btn-default"
+                    href="{{ url_for('security.register') }}"
+                    >register</a
+                >
+            </p>
+            {% endif %}
+            <p>
+                <a class="btn btn-primary" href="/"
+                    ><i class="glyphicon glyphicon-chevron-left"></i> Back</a
+                >
+            </p>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const labels = {{ labels | tojson}};
+
+    const data = {
+        labels: labels,
+        datasets: [{
+            label: 'Sales',
+            backgroundColor: 'rgb(255, 99, 132)',
+            borderColor: 'rgb(255, 99, 132)',
+            data: {{ data | tojson}},
+        }]
+    };
+
+    const config = {
+        type: 'line',
+        data: data,
+        options: { maintainAspectRatio: false }
+    };
+
+    const myChart = new Chart(
+        document.getElementById('myChart'),
+        config
+    );
+</script>
+{% endblock body %}
