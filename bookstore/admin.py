@@ -16,7 +16,7 @@ admin = Admin(
 # Add model views
 admin.add_view(RoleAdmin(Role, db.session))
 admin.add_view(UserAdmin(User, db.session))
-admin.add_view(StatsView(name='Thống Kê - Báo Cáo'))
+admin.add_view(StatsView(name='Báo Cáo - Thống Kê'))
 
 # define a context processor for merging flask-admin's template context into the
 # flask-security views.

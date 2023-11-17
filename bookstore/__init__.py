@@ -56,6 +56,12 @@ def build_sample_db():
             password=hash_password('staff'),
             roles=[staff_role]
         )
+        test_user = user_datastore.create_user(
+            first_name='user',
+            email='user@example.com',
+            password=hash_password('user'),
+            roles=[user_role]
+        )
 
         first_names = [
             'Harry', 'Amelia', 'Oliver', 'Jack', 'Isabella', 'Charlie', 'Sophie', 'Mia',

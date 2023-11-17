@@ -53,11 +53,13 @@ class RoleAdmin(MyModelView):
 class MyAdminIndexView(AdminIndexView):
     @expose('/')
     def index(self):
-        arg1 = 'Hello INDEX!'
+        if current_user.has_role('user'):
+            return redirect(url_for('main.home'))
         
         # if not current_user.is_authenticated:
         #     return redirect(url_for('security.login'))
-        err_msg = 'Đã có lỗi xảy ra! Vui lòng quay lại sau!'
+        arg1 = 'Hello INDEX!'
+        err_msg = 'Hiện tại bạn chưa đăng nhập vào! Vui lòng đăng nhập!'
         self._template_args['err_msg'] = err_msg
         self._template_args['arg1'] = arg1
         return self.render('admin/index.html')
