@@ -1,5 +1,6 @@
-from flask import render_template, url_for, flash, redirect, request
-from bookstore import app, db
+from flask import render_template, request, Blueprint
+
+main = Blueprint('main', __name__)
 
 posts =[
     {
@@ -16,12 +17,11 @@ posts =[
     }
 ]
 
-@app.route("/")
-@app.route("/home")
+@main.route("/")
+@main.route("/home")
 def home():
     return render_template("home.html", posts=posts)
 
-@app.route("/about")
+@main.route("/about")
 def about():
     return render_template("about.html", title='About')
-

@@ -4,3 +4,6 @@ Flask-SQLAlchemy
 flask-security-too
 email_validator
 pymysql
+flask-mailman
+bcrypt
+python-dotenv

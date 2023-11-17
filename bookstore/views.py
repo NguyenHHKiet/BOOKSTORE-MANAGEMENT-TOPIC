@@ -1,8 +1,8 @@
 from flask import Flask, url_for, redirect, render_template, request, abort
 from flask_admin.contrib import sqla
 from flask_security import current_user
-from flask_admin import expose, AdminIndexView, BaseView
-    
+from flask_admin import expose, BaseView, AdminIndexView
+
 # Create customized model view class
 class MyModelView(sqla.ModelView):
     column_display_pk = True
@@ -32,14 +32,22 @@ class MyModelView(sqla.ModelView):
                 # login
                 return redirect(url_for('security.login', next=request.url))
     
-    
-    
 class AuthenticatedView(BaseView):
     def is_accessible(self):
         return (current_user.is_active and
                 current_user.is_authenticated and
                 current_user.has_role('superuser')
         )
+        
+class UserAdmin(MyModelView):
+    column_list = ('first_name', 'email', 'roles')
+    column_labels = {'first_name': 'First Name', 'email': 'Email Address', 'roles': 'Role'}
+    column_filters = ('first_name', 'email', 'roles.name')
+
+class RoleAdmin(MyModelView):
+    column_list = ('name',)
+    column_labels = {'name': 'Role Name'}
+    column_filters = ('name',)
         
 # Create customized index view class that handles login & registration
 class MyAdminIndexView(AdminIndexView):
@@ -49,9 +57,11 @@ class MyAdminIndexView(AdminIndexView):
         
         # if not current_user.is_authenticated:
         #     return redirect(url_for('security.login'))
-        return self.render('admin/index.html', arg1=arg1)
-
-
+        err_msg = 'Đã có lỗi xảy ra! Vui lòng quay lại sau!'
+        self._template_args['err_msg'] = err_msg
+        self._template_args['arg1'] = arg1
+        return self.render('admin/index.html')
+    
 class StatsView(AuthenticatedView):
     @expose('/')
     def index(self):
@@ -68,3 +78,5 @@ class StatsView(AuthenticatedView):
     
         data = [0, 10, 15, 8, 22, 18, 25]
         return self.render('admin/chart.html', arg1=arg1, data=data, labels=labels)
+    
+    

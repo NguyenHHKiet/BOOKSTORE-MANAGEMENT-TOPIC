@@ -16,11 +16,11 @@ from bookstore.models import Role, User
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(app, user_datastore)
 
-# login_manager = LoginManager(app)
-# account
-# login_manager.login_view = 'login'
-# login_manager.login_message_category = 'info'
-from bookstore import routes
+from bookstore.main.routes import main
+from bookstore.users.routes import users
+app.register_blueprint(main)
+app.register_blueprint(users)
+
 from bookstore import admin
 
 
@@ -44,11 +44,17 @@ def build_sample_db():
         db.session.add(staff_role)
         db.session.commit()
 
-        test_user = user_datastore.create_user(
+        test_superuser = user_datastore.create_user(
             first_name='Admin',
             email='admin@example.com',
             password=hash_password('admin'),
             roles=[staff_role, super_user_role]
+        )
+        test_staff = user_datastore.create_user(
+            first_name='Staff',
+            email='staff@example.com',
+            password=hash_password('staff'),
+            roles=[staff_role]
         )
 
         first_names = [

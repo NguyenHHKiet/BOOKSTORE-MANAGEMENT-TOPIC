@@ -1,5 +1,5 @@
 from bookstore import app, db, security
-from bookstore.views import MyModelView, MyAdminIndexView, StatsView
+from bookstore.views import MyAdminIndexView, StatsView, UserAdmin, RoleAdmin
 from bookstore.models import User, Role
 from flask_admin import helpers as admin_helpers, Admin
 from flask import url_for
@@ -14,12 +14,13 @@ admin = Admin(
 )
 
 # Add model views
-admin.add_view(MyModelView(Role, db.session))
-admin.add_view(MyModelView(User, db.session))
+admin.add_view(RoleAdmin(Role, db.session))
+admin.add_view(UserAdmin(User, db.session))
 admin.add_view(StatsView(name='Thống Kê - Báo Cáo'))
 
 # define a context processor for merging flask-admin's template context into the
 # flask-security views.
+# This processor is added to all templates
 @security.context_processor
 def security_context_processor():
     return dict(
@@ -28,3 +29,4 @@ def security_context_processor():
         h=admin_helpers,
         get_url=url_for
     )
+    
