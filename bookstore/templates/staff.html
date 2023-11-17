@@ -1,0 +1,10 @@
+{% extends "layout.html" %} {% block content %}
+
+<h1>Welcome to Staff Page</h1>
+<div>Begining The New Task Employees</div>
+<div class="media-body">
+    <h2 class="account-heading">{{current_user.username}}</h2>
+    <p class="text-secondary">{{current_user.email}}</p>
+</div>
+
+{% endblock content %}

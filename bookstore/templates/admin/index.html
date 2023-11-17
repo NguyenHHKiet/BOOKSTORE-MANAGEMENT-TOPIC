@@ -5,7 +5,9 @@
             <h1>Flask-Admin example</h1>
             <p class="lead">Authentication</p>
             <div style="color: red">{{arg1}}</div>
+            {% if not current_user.is_authenticated %}
             <div style="color: red">{{err_msg | safe}}</div>
+            {% endif %}
             <p>
                 This example shows how you can use
                 <a
