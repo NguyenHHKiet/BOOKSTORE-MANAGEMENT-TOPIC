@@ -2,6 +2,28 @@
 
 Flask is a very lightweight Python Web Framework, easily helping beginners learn Python to create small websites.
 
+![image](https://github.com/NguyenHHKiet/BOOKSTORE-MANAGEMENT-TOPIC/assets/52524133/4bdebee6-66e3-40e2-bc59-f188b1e8cf92)
+[Flask-Security](https://flask-security-too.readthedocs.io/en/stable/index.html) allows you to quickly add common security mechanisms to your Flask application.
+Many of these features are made possible by integrating various Flask extensions and libraries. They include:
+
+Flask-Login
+
+Flask-Mailman
+
+Flask-Principal
+
+Flask-WTF
+
+itsdangerous
+
+passlib
+
+QRCode
+
+webauthn
+
+authlib
+
 ## Installation
 
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
