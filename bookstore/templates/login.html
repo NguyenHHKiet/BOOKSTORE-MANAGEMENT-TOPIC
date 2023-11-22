@@ -1,0 +1,53 @@
+{% extends "layout.html" %} {% block content %}
+
+<h1>Login Page</h1>
+<div class="content-section">
+    <form method="POST" action="">
+        {{form.hidden_tag()}}
+        <fiedset class="form-group">
+            <legend class="border-bottom mb-4">Join Today</legend>
+            <div class="form-group mt-2">
+                {{form.email.label(class="form-control-label")}} {% if
+                form.email.errors %} {{form.email(class="form-control
+                form-control-lg is-invalid")}}
+                <div class="invalid-feedback">
+                    {% for error in form.email.errors %}
+                    <span>{{error}}</span>
+                    {% endfor %}
+                </div>
+                {% else %} {{form.email(class="form-control form-control-lg")}}
+                {% endif %}
+            </div>
+            <div class="form-group mt-2">
+                {{form.password.label(class="form-control-label")}} {% if
+                form.password.errors %} {{form.password(class="form-control
+                form-control-lg is-invalid")}}
+                <div class="invalid-feedback">
+                    {% for error in form.password.errors %}
+                    <span>{{error}}</span>
+                    {% endfor %}
+                </div>
+                {% else %} {{form.password(class="form-control
+                form-control-lg")}} {% endif %}
+            </div>
+            <div class="form-check mt-2">
+                {{form.remember(class="form-check-input")}}
+                {{form.remember.label(class="form-check-label")}}
+            </div>
+        </fiedset>
+        <div class="form-group my-2">
+            {{form.submit(class="btn btn-outline-info")}}
+            <small class="text-muted me-2 float-right"
+                ><a href="#">Forget Password</a></small
+            >
+        </div>
+    </form>
+</div>
+<div class="border-top py-3">
+    <small class="text-muted">
+        Create An New Account?
+        <a class="ms-2" href="{{url_for('users.register')}}">Sign Up</a>
+    </small>
+</div>
+
+{% endblock content %}

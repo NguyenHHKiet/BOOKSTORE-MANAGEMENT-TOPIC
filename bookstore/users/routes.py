@@ -1,18 +1,48 @@
 from flask import render_template, request, Blueprint, url_for, redirect, flash
 from flask_security import logout_user, current_user, roles_accepted, login_required
-from bookstore.users.forms import UpdateAccountForm
+from bookstore.users.forms import UpdateAccountForm, RegistrationForm, LoginForm
 from bookstore.users.utils import save_picture
-from bookstore import db
+from bookstore.models import User
+from bookstore import db, user_datastore
+from flask_security.utils import hash_password, verify_password, login_user
 
 users = Blueprint('users', __name__)
 
 @users.route("/register", methods=["GET", "POST"])
 def register():
-    return render_template("register.html", title='Register')
+    if current_user.is_authenticated:
+        return redirect(url_for("main.home"))
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        user = form.get_user()
+        print("Register User: %s" % user)
+        if not user:
+            hashed_password = hash_password(form.password.data)
+            user_datastore.create_user(
+                username=form.username.data, email=form.email.data, password=hashed_password
+            )
+            db.session.commit()
+            flash(f"Your account has been created! You're now able to login {form.username.data}!", "success")
+            return redirect(url_for('users.login'))
+    return render_template("register.html", title='Registration', form=form)
 
 @users.route("/login", methods=["GET", "POST"])
 def login():
-    return render_template("login.html", title='Login')
+    if current_user.is_authenticated:
+        return redirect(url_for("main.home"))
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = form.get_user()
+        print("Login User: %s" % user)
+        if user:
+            login_user(user, remember=form.remember.data)
+            flash(f'You have been logged in!', 'success')
+            # remember previous page is required and transferred to login
+            next_page = request.args.get('next')
+            return redirect(next_page) if next_page else redirect(url_for('main.home'))
+        else:
+            flash(f'Login Unsuccessful. Please check email and password', 'danger')
+    return render_template("login.html", title='Login', form=form)
 
 @users.route('/logout')
 def logout():
