@@ -80,5 +80,27 @@ class StatsView(AuthenticatedView):
     
         data = [0, 10, 15, 8, 22, 18, 25]
         return self.render('admin/chart.html', arg1=arg1, data=data, labels=labels)
-    
-    
+
+class ProductView(MyModelView):
+        column_searchable_list = ['name']
+        column_sortable_list = ['unit_price', 'available_quantity']
+        column_filters = ['unit_price', 'name']
+        can_export = True
+        can_view_details = True
+
+class OrderView(MyModelView):
+        column_list = ['initiated_date',
+                       'cancel_date',
+                       'total_payment',
+                       'received_money',
+                       'paid_date',
+                       'delivered_date',
+                       'payment_method',
+                       'order_details',
+                       'customer ',
+                       'staff']
+        column_sortable_list = ['initiated_date', 'total_payment']
+        column_searchable_list = ['initiated_date', 'total_payment']
+        can_export = True
+        can_view_details = True
+        can_view_details = True
