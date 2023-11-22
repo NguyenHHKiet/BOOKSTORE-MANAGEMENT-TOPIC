@@ -95,13 +95,13 @@
                 </div>
             </div>
             {% else %}
-            <a class="nav-item nav-link" href="{{url_for('security.register')}}"
+            <a class="nav-item nav-link" href="{{url_for('users.register')}}"
                 >Register</a
             >
             <a
                 class="nav-item nav-link btn btn-primary text-white"
                 role="button"
-                href="{{url_for('security.login')}}"
+                href="{{url_for('users.login')}}"
                 >Login</a
             >
             {% endif %}
