@@ -1,6 +1,10 @@
 Flask
 Flask-Admin
 Flask-SQLAlchemy
+Flask-Login>=0.3.0
 flask-security-too
 email_validator
 pymysql
+flask-mailman
+python-dotenv
+Pillow

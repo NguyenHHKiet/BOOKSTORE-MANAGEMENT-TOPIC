@@ -1,5 +1,5 @@
 from bookstore import db
-from flask_security import RoleMixin, UserMixin
+from flask_security import UserMixin, RoleMixin
 
 # Define models
 roles_users = db.Table(
@@ -23,12 +23,12 @@ class User(db.Model, UserMixin):
     first_name = db.Column(db.String(255))
     last_name = db.Column(db.String(255))
     email = db.Column(db.String(255), unique=True)
+    phoneNumber = db.Column(db.String(255))
     password = db.Column(db.String(255))
     active = db.Column(db.Boolean())
     confirmed_at = db.Column(db.DateTime())
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('users', lazy='dynamic'))
-    fs_uniquifier = db.Column(db.String(64), unique=True, nullable=False)
 
     def __str__(self):
         return self.email

@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_security import Security, SQLAlchemyUserDatastore
-from flask_security.utils import hash_password
+import flask_login as login
+from werkzeug.security import generate_password_hash, check_password_hash
 
 # Create Flask application
 app = Flask(__name__)
@@ -12,17 +12,25 @@ db = SQLAlchemy(app)
 
 from bookstore.models import Role, User
 
-# Setup Flask-Security
-user_datastore = SQLAlchemyUserDatastore(db, User, Role)
-security = Security(app, user_datastore)
+# Initialize flask-login
+def init_login():
+    login_manager = login.LoginManager()
+    login_manager.init_app(app)
 
-# login_manager = LoginManager(app)
-# account
-# login_manager.login_view = 'login'
-# login_manager.login_message_category = 'info'
-from bookstore import routes
+    # Create user loader function
+    @login_manager.user_loader
+    def load_user(user_id):
+        return db.session.query(User).get(user_id)
+    
+from bookstore.main.routes import main
+from bookstore.users.routes import users
+app.register_blueprint(main)
+app.register_blueprint(users)
+
+# Initialize flask-login
+init_login()
+
 from bookstore import admin
-
 
 def build_sample_db():
     """
@@ -44,12 +52,13 @@ def build_sample_db():
         db.session.add(staff_role)
         db.session.commit()
 
-        test_user = user_datastore.create_user(
+        test_admin = User(
             first_name='Admin',
             email='admin@example.com',
-            password=hash_password('admin'),
+            password=generate_password_hash('admin'),
             roles=[staff_role, super_user_role]
         )
+        db.session.add(test_admin)
 
         first_names = [
             'Harry', 'Amelia', 'Oliver', 'Jack', 'Isabella', 'Charlie', 'Sophie', 'Mia',
@@ -65,13 +74,14 @@ def build_sample_db():
         for i in range(len(first_names)):
             tmp_email = first_names[i].lower() + "." + last_names[i].lower() + "@example.com"
             tmp_pass = ''.join(random.choice(string.ascii_lowercase + string.digits) for i in range(10))
-            user_datastore.create_user(
+            user = User(
                 first_name=first_names[i],
                 last_name=last_names[i],
                 email=tmp_email,
-                password=hash_password(tmp_pass),
+                password=generate_password_hash(tmp_pass),
                 roles=[user_role, ]
             )
+            db.session.add(user)
         db.session.commit()
     return
 
