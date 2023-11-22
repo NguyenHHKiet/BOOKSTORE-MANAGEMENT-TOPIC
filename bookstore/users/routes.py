@@ -5,7 +5,6 @@ from bookstore.users.utils import save_picture
 from bookstore import db
 
 users = Blueprint('users', __name__)
-
 @users.route("/register", methods=["GET", "POST"])
 def register():
     return render_template("register.html", title='Register')

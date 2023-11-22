@@ -1,6 +1,6 @@
 from bookstore import app, db, security
-from bookstore.views import MyAdminIndexView, StatsView, UserAdmin, RoleAdmin
-from bookstore.models import User, Role
+from bookstore.views import MyAdminIndexView, StatsView, ProductView, OrderView, UserView
+from bookstore.models import User, Book, Order
 from flask_admin import helpers as admin_helpers, Admin
 from flask import url_for
 
@@ -14,8 +14,9 @@ admin = Admin(
 )
 
 # Add model views
-admin.add_view(RoleAdmin(Role, db.session))
-admin.add_view(UserAdmin(User, db.session))
+admin.add_view(ProductView(Book, db.session))
+admin.add_view(OrderView(Order, db.session))
+admin.add_view(UserView(User, db.session))
 admin.add_view(StatsView(name='Báo Cáo - Thống Kê'))
 
 # define a context processor for merging flask-admin's template context into the

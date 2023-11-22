@@ -36,54 +36,51 @@ def build_sample_db():
     db.create_all()
 
     with app.app_context():
-        user_role = Role(name='user')
-        super_user_role = Role(name='superuser')
-        staff_role = Role(name='staff')
-        db.session.add(user_role)
-        db.session.add(super_user_role)
+        customer_role = Role(name='CUSTOMER')
+        admin_role = Role(name='ADMIN')
+        staff_role = Role(name='STAFF')
+        db.session.add(customer_role)
+        db.session.add(admin_role)
         db.session.add(staff_role)
         db.session.commit()
 
-        test_superuser = user_datastore.create_user(
-            first_name='Admin',
+        admin_user = user_datastore.create_user(
+            username='admin',
             email='admin@example.com',
             password=hash_password('admin'),
-            roles=[staff_role, super_user_role]
+            fullname= 'exampleadmin',
+            phone= '0789640313',
+            gender = True,
+            address='HCM',
+            active=True,
+            image_file='',
+            roles=[admin_role]
         )
-        test_staff = user_datastore.create_user(
-            first_name='Staff',
+        staff_user = user_datastore.create_user(
+            username='staff',
             email='staff@example.com',
             password=hash_password('staff'),
+            fullname= 'examplestaff',
+            phone= '013245454',
+            gender = True,
+            address='HCM',
+            active=True,
+            image_file='',
             roles=[staff_role]
         )
-        test_user = user_datastore.create_user(
-            first_name='user',
-            email='user@example.com',
-            password=hash_password('user'),
-            roles=[user_role]
+        customer_user = user_datastore.create_user(
+            username='customer',
+            email='customer@example.com',
+            password=hash_password('customer'),
+            fullname= 'examplecustomer',
+            phone= '0354849566',
+            gender = True,
+            address='HCM',
+            active=True,
+            image_file='',
+            roles=[customer_role]
         )
 
-        first_names = [
-            'Harry', 'Amelia', 'Oliver', 'Jack', 'Isabella', 'Charlie', 'Sophie', 'Mia',
-            'Jacob', 'Thomas', 'Emily', 'Lily', 'Ava', 'Isla', 'Alfie', 'Olivia', 'Jessica',
-            'Riley', 'William', 'James', 'Geoffrey', 'Lisa', 'Benjamin', 'Stacey', 'Lucy'
-        ]
-        last_names = [
-            'Brown', 'Smith', 'Patel', 'Jones', 'Williams', 'Johnson', 'Taylor', 'Thomas',
-            'Roberts', 'Khan', 'Lewis', 'Jackson', 'Clarke', 'James', 'Phillips', 'Wilson',
-            'Ali', 'Mason', 'Mitchell', 'Rose', 'Davis', 'Davies', 'Rodriguez', 'Cox', 'Alexander'
-        ]
-
-        for i in range(len(first_names)):
-            tmp_email = first_names[i].lower() + "." + last_names[i].lower() + "@example.com"
-            tmp_pass = ''.join(random.choice(string.ascii_lowercase + string.digits) for i in range(10))
-            user_datastore.create_user(
-                first_name=first_names[i],
-                last_name=last_names[i],
-                email=tmp_email,
-                password=hash_password(tmp_pass),
-                roles=[user_role, ]
-            )
         db.session.commit()
     return
 

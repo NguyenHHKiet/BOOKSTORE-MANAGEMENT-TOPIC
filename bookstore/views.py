@@ -11,7 +11,7 @@ class MyModelView(sqla.ModelView):
     can_view_details = True
     def is_accessible(self):
         # roles with ascending permissions...
-        if current_user.has_role('superuser'):
+        if current_user.has_role('ADMIN'):
             self.can_create = True
             self.can_edit = True
             self.can_delete = True
@@ -36,24 +36,15 @@ class AuthenticatedView(BaseView):
     def is_accessible(self):
         return (current_user.is_active and
                 current_user.is_authenticated and
-                current_user.has_role('superuser')
+                current_user.has_role('ADMIN')
         )
-        
-class UserAdmin(MyModelView):
-    column_list = ('first_name', 'email', 'roles')
-    column_labels = {'first_name': 'First Name', 'email': 'Email Address', 'roles': 'Role'}
-    column_filters = ('first_name', 'email', 'roles.name')
 
-class RoleAdmin(MyModelView):
-    column_list = ('name',)
-    column_labels = {'name': 'Role Name'}
-    column_filters = ('name',)
         
 # Create customized index view class that handles login & registration
 class MyAdminIndexView(AdminIndexView):
     @expose('/')
     def index(self):
-        if current_user.has_role('user'):
+        if current_user.has_role('CUSTOMER'):
             return redirect(url_for('main.home'))
         
         # if not current_user.is_authenticated:
@@ -82,3 +73,34 @@ class StatsView(AuthenticatedView):
         return self.render('admin/chart.html', arg1=arg1, data=data, labels=labels)
     
     
+
+class ProductView( MyModelView):
+    column_searchable_list = ['name']
+    column_sortable_list = ['unit_price', 'available_quantity']
+    column_filters = ['unit_price', 'name']
+    can_export = True
+    can_view_details = True
+
+class OrderView( MyModelView):
+    column_list = ['initiated_date',
+                   'cancel_date',
+                   'total_payment',
+                   'received_money',
+                   'paid_date',
+                   'delivered_date',
+                   'payment_method',
+                   'order_details',
+                   'customer ',
+                   'staff']
+    column_sortable_list = ['initiated_date', 'total_payment']
+    column_searchable_list = ['initiated_date', 'total_payment']
+    can_export = True
+    can_view_details = True
+    can_view_details=True
+
+class UserView( MyModelView):
+    column_list = ['id','username', 'password','fullname', 'email', 'phone', 'gender' , 'address', 'enable', 'avatar_src', 'create_at' , 'roles']
+    column_searchable_list = ['username', 'email']
+    column_filters = ['roles']
+    can_export = True
+    can_view_details = True

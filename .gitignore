@@ -1,6 +1,12 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python,venv,flask
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,venv,flask
 
+##Pycharm
+
+.idea/
+bookstore/.idea/
+
+
 ### Flask ###
 instance/*
 !instance/.gitignore
