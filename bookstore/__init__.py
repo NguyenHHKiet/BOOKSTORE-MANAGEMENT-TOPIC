@@ -10,7 +10,7 @@ app.config.from_pyfile('../config.py')
 # Create database connection object
 db = SQLAlchemy(app)
 
-from bookstore.models import Role, User
+from bookstore.models import Role, User, Configuration
 
 # Setup Flask-Security
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
@@ -42,6 +42,12 @@ def build_sample_db():
         db.session.add(user_role)
         db.session.add(super_user_role)
         db.session.add(staff_role)
+
+        appconfig = Configuration(min_import_quantity=150,
+                                  min_stock_quantity=300 ,
+                                  time_to_end_order=48 ,
+                                  time_to_end_register= 24)
+        db.session.add(appconfig)
         db.session.commit()
 
         test_superuser = user_datastore.create_user(

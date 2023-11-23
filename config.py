@@ -9,7 +9,7 @@ DEBUG = True
 # Create in-memory database
 DATABASE_FILE = 'bookstore'
 # SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:@localhost/'+ DATABASE_FILE +'?charset=utf8mb4' # Non_password_MySQL
-# SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:%s@localhost/bookstore?charset=utf8mb4' % quote('password_of_MySQLDatabase')
+SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://admin:%s@localhost/bookstore?charset=utf8mb4' % quote('admin')
 
 # Flask-Security config
 SECURITY_URL_PREFIX = "/admin"

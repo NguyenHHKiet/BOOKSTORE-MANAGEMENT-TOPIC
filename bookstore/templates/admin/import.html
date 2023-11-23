@@ -1,0 +1,70 @@
+{% extends 'admin/master.html' %} {% block body %} {{ super() }}
+    <div class="container">
+        <form method="POST" action="" enctype="multipart/form-data" id="form">
+            <div class="mb-3">
+                <label for="formFile" class="form-label">Import book</label>
+                <input class="form-control" type="file" id="excel_file" name="excel"
+                       accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+            </div>
+            <button  type="submit" class="btn btn-primary">Submit</button>
+        </form>
+
+        <div id="spreadsheet" class="mt-5"></div>
+    </div>
+    <script lang="javascript" src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+    <script>
+        const excel_file = document.getElementById('excel_file');
+        excel_file.addEventListener('change', (event) => {
+            var reader = new FileReader();
+            reader.readAsArrayBuffer(event.target.files[0]);
+            reader.onload = function (event) {
+                var data = new Uint8Array(reader.result);
+                var work_book = XLSX.read(data, {type: 'array'});
+                var sheet_name = work_book.SheetNames;
+                var sheet_data = XLSX.utils.sheet_to_json(work_book.Sheets[sheet_name[0]], {header: 1});
+                if (sheet_data.length > 0) {
+                    var table_output = '<table class="table table-striped table-bordered">';
+                    for (var row = 0; row < sheet_data.length; row++) {
+                        table_output += '<tr>';
+                        for (var cell = 0; cell < sheet_data[row].length; cell++) {
+                            if (row == 0) {
+                                table_output += '<th>' + sheet_data[row][cell] + '</th>';
+
+                            } else {
+                                table_output += '<td>' + sheet_data[row][cell] + '</td>';
+                            }
+                        }
+                        table_output += '</tr>';
+                    }
+                    table_output += '</table>';
+                    document.getElementById('spreadsheet').innerHTML = table_output;
+                }
+            }
+
+        });
+        const fm =  document.getElementById('form');
+        fm.addEventListener("submit", (event) => {
+            event.preventDefault();
+            payload = excel_file.files[0]
+            if (!payload) {
+                alert('Please choose data')
+            }
+            else {
+                const formData = new FormData()
+                formData.append('excel', payload)
+                fetch('/import', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then((res) => {
+                        if (res.ok) {
+                            alert("Update book successful")
+                        }
+                    })
+                    .catch((err) => {
+                        alert(err.data)
+                    })
+            }
+        })
+    </script>
+{% endblock body %}
