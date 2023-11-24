@@ -1,10 +1,170 @@
-{% extends "layout.html" %} {% block content %}
+{% extends "layout.html" %} {% block orders %}
 
-<h1>Welcome to Staff Page</h1>
 <div>Begining The New Task Employees</div>
 <div class="media-body">
-    <h2 class="account-heading">{{current_user.username}}</h2>
-    <p class="text-secondary">{{current_user.email}}</p>
+    <h2 class="account-heading">{{current_user.email}}</h2>
+    <main class="container">
+        <div class="row">
+            <div class="content-section col-md-6">
+                <form method="POST" action="">
+                    {{form.hidden_tag()}}
+                    <fiedset class="form-group">
+                        <legend class="border-bottom mb-4">
+                            <h2 class="text-white rounded p-3 text-bg-info">
+                                Product Order Form
+                            </h2>
+                        </legend>
+                        <div class="row">
+                            <div class="form-group mt-2 col">
+                                {{form.username.label(class="form-control-label")}}
+                                {% if form.username.errors %}
+                                {{form.username(class="form-control
+                                form-control-lg is-invalid")}}
+                                <div class="invalid-feedback">
+                                    {% for error in form.username.errors %}
+                                    <span>{{error}}</span>
+                                    {% endfor %}
+                                </div>
+                                {% else %} {{form.username(class="form-control
+                                form-control-lg")}} {% endif %}
+                            </div>
+                            <div class="form-group mt-2 col">
+                                {{form.email.label(class="form-control-label")}}
+                                {% if form.email.errors %}
+                                {{form.email(class="form-control form-control-lg
+                                is-invalid")}}
+                                <div class="invalid-feedback">
+                                    {% for error in form.email.errors %}
+                                    <span>{{error}}</span>
+                                    {% endfor %}
+                                </div>
+                                {% else %} {{form.email(class="form-control
+                                form-control-lg")}} {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-group mt-2">
+                            {{form.password.label(class="form-control-label")}}
+                            {% if form.password.errors %}
+                            {{form.password(class="form-control form-control-lg
+                            is-invalid")}}
+                            <div class="invalid-feedback">
+                                {% for error in form.password.errors %}
+                                <span>{{error}}</span>
+                                {% endfor %}
+                            </div>
+                            {% else %} {{form.password(class="form-control
+                            form-control-lg")}} {% endif %}
+                        </div>
+                        <div class="form-group mt-2">
+                            {{form.confirm_password.label(class="form-control-label")}}
+                            {% if form.confirm_password.errors %}
+                            {{form.confirm_password(class="form-control
+                            form-control-lg is-invalid")}}
+                            <div class="invalid-feedback">
+                                {% for error in form.confirm_password.errors %}
+                                <span>{{error}}</span>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            {{form.confirm_password(class="form-control
+                            form-control-lg")}} {% endif %}
+                        </div>
+                    </fiedset>
+                    <div class="form-group mt-3 float-end">
+                        {{form.submit(class="btn btn-outline-info px-3 py-2")}}
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-6">
+                <table class="table">
+                    <h3>Your Order</h3>
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col" colspan="4">Book Name</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td colspan="4">Otto</td>
+                            <td>@mdo</td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td colspan="4">Thornton</td>
+                            <td>@fat</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">3</th>
+                            <td colspan="4">Larry the Bird</td>
+                            <td>@twitter</td>
+                            <td>4</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td><strong>Subtotal</strong></td>
+                            <td>$88.00</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Shipping</strong></td>
+                            <td>Free shipping</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br />
+                <div class="form-check">
+                    <input
+                        class="form-check-input"
+                        type="radio"
+                        name="flexRadioDefault"
+                        id="flexRadioDefault1"
+                    />
+                    <label class="form-check-label" for="flexRadioDefault1">
+                        <em> <strong>Paypal</strong></em>
+                    </label>
+                    <span>
+                        <img
+                            src="https://www.logolynx.com/images/logolynx/c3/c36093ca9fb6c250f74d319550acac4d.jpeg"
+                            alt=""
+                            width="50"
+                        />
+                    </span>
+                </div>
+                <div class="form-check">
+                    <input
+                        class="form-check-input"
+                        type="radio"
+                        name="flexRadioDefault"
+                        id="flexRadioDefault2"
+                        checked
+                    />
+                    <label class="form-check-label" for="flexRadioDefault2">
+                        <em><strong>Direct Bank Transfer</strong></em>
+                    </label>
+                    <p>
+                        Make your payment directly into our bank account. Please
+                        use your Order ID as the payment reference. Your order
+                        will not be shipped until the funds have cleared in our
+                        account.
+                    </p>
+                </div>
+                <button
+                    type="button"
+                    class="btn btn-info text-white py-2 px-4 float-end fw-bold"
+                >
+                    Place Order
+                </button>
+            </div>
+        </div>
+    </main>
 </div>
 
-{% endblock content %}
+{% endblock orders %}
