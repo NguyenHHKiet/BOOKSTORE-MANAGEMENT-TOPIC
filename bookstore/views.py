@@ -12,10 +12,6 @@ class MyModelView(sqla.ModelView):
     def is_accessible(self):
         # roles with ascending permissions...
         if current_user.has_role('superuser'):
-            self.can_create = True
-            self.can_edit = True
-            self.can_delete = True
-            self.can_export = True
             return True
         return False
     
@@ -103,4 +99,14 @@ class OrderView(MyModelView):
         column_searchable_list = ['initiated_date', 'total_payment']
         can_export = True
         can_view_details = True
-        can_view_details = True
+
+class BookImportView(AuthenticatedView):
+    @expose('/')
+    def index(self):
+       return self.render('/admin/import.html')
+
+class ConfigurationView(MyModelView):
+    column_list = ['min_import_quantity', 'min_stock_quantity', 'time_to_end_order', 'time_to_end_register']
+    can_delete = False
+    can_create = False
+
