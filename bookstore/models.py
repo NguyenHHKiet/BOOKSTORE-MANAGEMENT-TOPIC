@@ -79,12 +79,13 @@ class Book(db.Model):
     name = Column(String(100), nullable=False, unique=True)
     unit_price = Column(Integer, nullable=False, default=0)
     available_quantity = Column(Integer, nullable=False)
-    image_src = Column(String(50), nullable=True)
+    image_src = Column(String(50), nullable=True, default='default.jpg')
     category_id = Column(Integer, ForeignKey(Category.id), nullable=False)
     author_id = Column(Integer, ForeignKey(Author.id), nullable=False)
     import_details = relationship("ImportDetails", backref='book', lazy=True)
     order_details = relationship("OrderDetails", backref= 'book', lazy= True)
     enable = Column(Boolean, nullable=False, default=False)
+    description = db.Column(db.String(500))
 
 class ImportTicket(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
