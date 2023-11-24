@@ -73,4 +73,5 @@ def account():
 @users.route('/staff', methods=["GET", "POST"])
 @roles_accepted('staff', 'admin')
 def staff():
-    return render_template("staff.html", title='Staff')
+    form = RegistrationForm()
+    return render_template("staff.html", title='Staff Action',form=form)
