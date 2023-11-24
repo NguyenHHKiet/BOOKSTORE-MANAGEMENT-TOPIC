@@ -1,17 +1,100 @@
 {% extends "layout.html" %} {% block content %}
 
 <h1>Welcome to Home Page</h1>
-{% for post in posts %}
-<article class="media content-section">
-    <div class="media-body">
-        <h2>
-            <a
-                class="article-title"
-                >{{ post.title }}</a
-            >
-        </h2>
-        <p class="article-content">{{ post.content }}</p>
-    </div>
-</article>
-{% endfor %} 
-{% endblock content %}
+<div class="grid-container">
+    {% for post in posts %}
+    <article class="media content-section">
+        <div class="media-body">
+            <div class="article-metadata">
+                <nav aria-label="breadcrumb">
+                    <ol
+                        class="breadcrumb align-items-center w-100 position-relative"
+                    >
+                        <li>
+                            <img
+                                class="rounded-circle account-img"
+                                style="
+                                    width: 30px;
+                                    height: 30px;
+                                    margin: 0px 10px 0px 0;
+                                "
+                                src="{{url_for('static', filename='profile_pics/' + post.image_src)}}"
+                            />
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a class="me-2">{{ post.author.name }}</a>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">
+                            <small class="text-muted"
+                                >{{ post.category.name }}</small
+                            >
+                        </li>
+                        <li class="position-absolute" style="right: 0">
+                            <a
+                                class="btn btn-primary btn-sm"
+                                role="button"
+                                aria-disabled="true"
+                                href="{{url_for('orders.orderBooks')}}"
+                                >Buy Now</a
+                            >
+                            <a
+                                class="btn btn-secondary btn-sm"
+                                role="button"
+                                aria-disabled="true"
+                                >Add Cart</a
+                            >
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+            <h2>
+                <a
+                    class="article-title"
+                    href="{{url_for('books.bookDetail', book_id=post.id)}}"
+                    >{{ post.name }}</a
+                >
+            </h2>
+            <figure class="figure w-100">
+                <div class="ratio ratio-1x1">
+                    <img
+                        src="{{url_for('static', filename='profile_pics/' + post.image_src)}}"
+                        class="figure-img img-fluid rounded"
+                        alt="..."
+                    />
+                </div>
+                <figcaption class="figure-caption article-content">
+                    {{ post.description }}
+                </figcaption>
+            </figure>
+        </div>
+    </article>
+    {% endfor %}
+</div>
+{% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1,
+right_current=2) %} {% if page_num %} {% if posts.page == page_num %}
+<a
+    class="btn btn-info mb-4 text-white"
+    href="{{url_for('main.home', page=page_num)}}"
+    >{{page_num}}</a
+>
+{% else %}
+<a
+    class="btn btn-outline-info mb-4"
+    href="{{url_for('main.home', page=page_num)}}"
+    >{{page_num}}</a
+>
+{% endif %} {% else %} ... {% endif %} {% endfor %} {% endblock content %}
+
+{% block index %} 
+    <div class="content-section">
+        <h3>Our Sidebar</h3>
+        <p class='text-muted'>You can put any information here you'd like.
+            <ul class="list-group">
+                <li class="list-group-item list-group-item-light">Latest Posts</li>
+                <li class="list-group-item list-group-item-light">Announcements</li>
+                <li class="list-group-item list-group-item-light">Calendars</li>
+                <li class="list-group-item list-group-item-light">etc</li>
+            </ul>
+        </p>    
+    <div>
+{% endblock index %}

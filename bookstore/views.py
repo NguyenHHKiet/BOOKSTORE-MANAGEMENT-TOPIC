@@ -12,6 +12,10 @@ class MyModelView(sqla.ModelView):
     def is_accessible(self):
         # roles with ascending permissions...
         if current_user.has_role('superuser'):
+            self.can_create = True
+            self.can_edit = True
+            self.can_delete = True
+            self.can_export = True
             return True
         return False
     
@@ -78,11 +82,16 @@ class StatsView(AuthenticatedView):
         return self.render('admin/chart.html', arg1=arg1, data=data, labels=labels)
 
 class ProductView(MyModelView):
-        column_searchable_list = ['name']
-        column_sortable_list = ['unit_price', 'available_quantity']
-        column_filters = ['unit_price', 'name']
-        can_export = True
-        can_view_details = True
+    column_list = ('id', 'name', 'unit_price','available_quantity','enable','category.name','author.name')
+    column_labels = {'id':'ID','name': 'Book Name', 'unit_price': 'Unit Price',
+                     'available_quantity': 'Available Quantity','enable': 'Enable'
+                     ,'category.name':'Category'
+                     ,'author.name':'Author'}
+    column_searchable_list = ['name']
+    column_sortable_list = ['unit_price', 'available_quantity']
+    column_filters = ['unit_price', 'name']
+    can_export = True
+    can_view_details = True
 
 class OrderView(MyModelView):
         column_list = ['initiated_date',

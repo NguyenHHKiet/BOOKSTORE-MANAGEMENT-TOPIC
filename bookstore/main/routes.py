@@ -1,26 +1,15 @@
 
 from flask import render_template, request, Blueprint, flash, jsonify, make_response
 from bookstore import utils
-main = Blueprint('main', __name__)
+from bookstore import Book
 
-posts =[
-    {
-        'author': 'Corey Schafer',
-        'title': 'Blog Post 1',
-        'content': 'First Post Comment',
-        'date_posted': 'April 20, 2018'
-    }, 
-    {
-        'author': 'Jane Doe',
-        'title': 'Blog Post 2',
-        'content': 'Second Post Comment',
-        'date_posted': 'April 21, 2018'
-    }
-]
+main = Blueprint('main', __name__)
 
 @main.route("/")
 @main.route("/home")
 def home():
+    page = request.args.get('page', 1, type=int)
+    posts = Book.query.order_by(Book.id.desc()).paginate(page=page, per_page=5)
     return render_template("home.html", posts=posts)
 
 @main.route("/about")
