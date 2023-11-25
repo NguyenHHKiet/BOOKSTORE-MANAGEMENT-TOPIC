@@ -47,10 +47,15 @@
                     >
                 </li>
             </ul>
-            <form class="d-flex" role="search">
+            <form
+                class="d-flex"
+                role="search"
+                action="{{ url_for('main.searchItems') }}"
+            >
                 <input
                     class="form-control me-2"
                     type="search"
+                    name="search"
                     placeholder="Search"
                     aria-label="Search"
                 />
@@ -60,8 +65,12 @@
             </form>
             <!-- Navbar Right Side -->
             <div class="navbar-nav ms-auto pl-3">
-                <button type="button" class="btn btn-primary me-3 btn-sm">
-                    Notifications <span class="badge text-bg-secondary">4</span>
+                <button
+                    type="button"
+                    class="btn btn-primary me-3 btn-sm d-flex align-items-center"
+                >
+                    <i class="bi-bag-plus-fill mx-1"></i> Cart
+                    <span class="badge text-bg-danger mx-1">4</span>
                 </button>
                 {% if current_user.is_authenticated %}
                 <div class="nav-item dropdown">
