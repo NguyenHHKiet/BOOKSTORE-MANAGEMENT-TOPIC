@@ -1,6 +1,8 @@
-from flask import render_template, request, Blueprint, url_for, redirect, flash
+from flask import render_template, request, Blueprint, url_for, redirect, flash, session
 from flask_security import logout_user, current_user, roles_accepted, login_required
 from bookstore.users.forms import UpdateAccountForm, RegistrationForm, LoginForm
+from bookstore.cart.forms import AddToCart
+from bookstore.cart.utils import handle_cart
 from bookstore.users.utils import save_picture
 from bookstore.models import User
 from bookstore import db, user_datastore
@@ -73,5 +75,27 @@ def account():
 @users.route('/staff', methods=["GET", "POST"])
 @roles_accepted('staff', 'admin')
 def staff():
-    form = RegistrationForm()
-    return render_template("staff.html", title='Staff Action',form=form)
+    if "cart" not in session:
+        session["cart"] = []
+    form = AddToCart()
+    
+    id = form.id.data
+    quantity = form.quantity.data
+    
+    print(id, quantity)
+    if id is None and request.method == "POST":
+        flash("Your Id book is Empty. Please input fill", "warning")
+    
+    if form.validate_on_submit() and id is not None and request.method == "POST":
+        product = [prod for prod in session["cart"] if prod["id"] == int(id)]
+        index = [index for index, prod in enumerate(session["cart"]) if prod["id"] == int(id)]
+        if len(product) == 0:
+            session["cart"].append({"id": id, "quantity": quantity})
+        else:
+            session["cart"][index[0]]['quantity'] = product[0]['quantity'] + quantity
+        session.modified = True
+    elif request.method == "GET":
+        form.id.data = ""
+        form.quantity.data = 1
+    products, grand_total, grand_total_plus_shipping, quantity_total = handle_cart()
+    return render_template("staff.html", title='Staff Action',form=form, products=products, grand_total=grand_total, grand_total_plus_shipping=grand_total_plus_shipping, quantity_total=quantity_total)

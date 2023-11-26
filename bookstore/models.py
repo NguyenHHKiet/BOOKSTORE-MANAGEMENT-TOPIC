@@ -29,7 +29,7 @@ class User(db.Model, UserMixin):
     phoneNumber = db.Column(db.String(20))
     first_name = db.Column(db.String(255))
     last_name = db.Column(db.String(255))
-    password = db.Column(db.String(255))
+    password = db.Column(db.String(255), nullable=False)
     active = db.Column(db.Boolean())
     confirmed_at = db.Column(db.DateTime())
     roles = db.relationship('Role', secondary=roles_users,
@@ -86,6 +86,24 @@ class Book(db.Model):
     order_details = relationship("OrderDetails", backref= 'book', lazy= True)
     enable = Column(Boolean, nullable=False, default=False)
     description = db.Column(db.String(500))
+    
+    def in_stock(self):
+        if db.session:
+            item = []
+            try:
+                item = db.session['cart']
+            except:
+                pass
+            index = 0
+            if len(item) > 0:
+                for ind, it in enumerate(item):
+                    if it.get('id') == self.id:
+                        index = ind
+                return self.available_quantity - item[index].get('quantity')
+            else:
+                return self.available_quantity
+        else:
+            return self.available_quantity
 
 class ImportTicket(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -117,6 +135,13 @@ class Order(db.Model):
     customer = relationship("User", foreign_keys=customer_id, backref='bought')
     staff_id = Column(Integer, ForeignKey(User.id), nullable=False)
     staff = relationship("User", foreign_keys=staff_id, backref='managed')
+    state = db.Column(db.String(20))
+    
+    def order_total(self):
+        return db.session.quey(db.func.sum(OrderDetails.quantity * Book.unit_price)).join(Book).filter(OrderDetails.order_id == self.id).scalar() + 1000
+
+    def quantity_total(self):
+        return db.session.query(db.func.sum(OrderDetails.quantity)).filter(OrderDetails.order_id == self.id).scalar()
 
 class OrderDetails(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)

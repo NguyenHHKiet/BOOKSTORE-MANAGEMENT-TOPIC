@@ -1,4 +1,4 @@
-{% extends "layout.html" %} {% block orders %}
+{% extends "layout.html" %} {% block body %}
 
 <div>Begining The New Task Employees</div>
 <div class="media-body">
@@ -6,77 +6,41 @@
     <main class="container">
         <div class="row">
             <div class="content-section col-md-6">
-                <form method="POST" action="">
-                    {{form.hidden_tag()}}
+                <form
+                    method="POST"
+                    action="{{ url_for('users.staff') }}"
+                    class="row"
+                >
+                    {{form.hidden_tag()}} {{ form.csrf_token }}
                     <fiedset class="form-group">
-                        <legend class="border-bottom mb-4">
+                        <legend class="border-bottom mb-2">
                             <h2 class="text-white rounded p-3 text-bg-info">
                                 Product Order Form
                             </h2>
                         </legend>
-                        <div class="row">
-                            <div class="form-group mt-2 col">
-                                {{form.username.label(class="form-control-label")}}
-                                {% if form.username.errors %}
-                                {{form.username(class="form-control
-                                form-control-lg is-invalid")}}
-                                <div class="invalid-feedback">
-                                    {% for error in form.username.errors %}
-                                    <span>{{error}}</span>
-                                    {% endfor %}
-                                </div>
-                                {% else %} {{form.username(class="form-control
-                                form-control-lg")}} {% endif %}
-                            </div>
-                            <div class="form-group mt-2 col">
-                                {{form.email.label(class="form-control-label")}}
-                                {% if form.email.errors %}
-                                {{form.email(class="form-control form-control-lg
-                                is-invalid")}}
-                                <div class="invalid-feedback">
-                                    {% for error in form.email.errors %}
-                                    <span>{{error}}</span>
-                                    {% endfor %}
-                                </div>
-                                {% else %} {{form.email(class="form-control
-                                form-control-lg")}} {% endif %}
-                            </div>
+                        <div class="d-flex gap-2 mb-2">
+                            Id {{ form.id(class='form-control', type='number')
+                            }}
                         </div>
-                        <div class="form-group mt-2">
-                            {{form.password.label(class="form-control-label")}}
-                            {% if form.password.errors %}
-                            {{form.password(class="form-control form-control-lg
-                            is-invalid")}}
-                            <div class="invalid-feedback">
-                                {% for error in form.password.errors %}
-                                <span>{{error}}</span>
-                                {% endfor %}
-                            </div>
-                            {% else %} {{form.password(class="form-control
-                            form-control-lg")}} {% endif %}
-                        </div>
-                        <div class="form-group mt-2">
-                            {{form.confirm_password.label(class="form-control-label")}}
-                            {% if form.confirm_password.errors %}
-                            {{form.confirm_password(class="form-control
-                            form-control-lg is-invalid")}}
-                            <div class="invalid-feedback">
-                                {% for error in form.confirm_password.errors %}
-                                <span>{{error}}</span>
-                                {% endfor %}
-                            </div>
-                            {% else %}
-                            {{form.confirm_password(class="form-control
-                            form-control-lg")}} {% endif %}
+                        <div
+                            class="d-flex justify-content-between align-items-center gap-2"
+                        >
+                            <div class="">Quantity</div>
+                            {{ form.quantity(class='form-control',
+                            type='number', min=1, step=1, value=1) }}
+                            <button
+                                type="submit"
+                                class="btn btn-info text-white"
+                                style="white-space: nowrap"
+                            >
+                                <i class="bi bi-plus-square-fill"></i> Add
+                            </button>
                         </div>
                     </fiedset>
-                    <div class="form-group mt-3 float-end">
-                        {{form.submit(class="btn btn-outline-info px-3 py-2")}}
-                    </div>
                 </form>
             </div>
-            <div class="col-md-6">
-                <table class="table">
+            <form action="{{ url_for('orders.checkout') }}" class="col-md-6">
+                <table class="table table-striped content-section">
                     <h3>Your Order</h3>
                     <thead>
                         <tr>
@@ -84,38 +48,52 @@
                             <th scope="col" colspan="4">Book Name</th>
                             <th scope="col">Price</th>
                             <th scope="col">Quantity</th>
+                            <th scope="col">Total</th>
+                            <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>
+                        {% for product in products %}
                         <tr>
                             <th scope="row">1</th>
-                            <td colspan="4">Otto</td>
-                            <td>@mdo</td>
-                            <td>2</td>
+                            <td colspan="4">{{ product['name'] }}</td>
+                            <td>&dollar;{{ product['unit_price'] / 100 }}</td>
+                            <td>{{ product['quantity'] }}</td>
+                            <th>
+                                <strong
+                                    >&dollar;{{ product['total'] / 100
+                                    }}</strong
+                                >
+                            </th>
+                            <th>
+                                <a
+                                    class="btn btn-danger btn-sm"
+                                    href="{{ url_for('cart.removeFromCart', index=product['index']) }}"
+                                    role="button"
+                                >
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </th>
                         </tr>
-                        <tr>
-                            <th scope="row">2</th>
-                            <td colspan="4">Thornton</td>
-                            <td>@fat</td>
-                            <td>3</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">3</th>
-                            <td colspan="4">Larry the Bird</td>
-                            <td>@twitter</td>
-                            <td>4</td>
-                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
-                <table class="table">
+                <table class="table content-section">
                     <tbody>
                         <tr>
-                            <td><strong>Subtotal</strong></td>
-                            <td>$88.00</td>
+                            <td><strong>Total</strong></td>
+                            <td>
+                                <strong class="pull-right"
+                                    >&dollar;{{ grand_total_plus_shipping / 100
+                                    }}</strong
+                                >
+                            </td>
                         </tr>
                         <tr>
-                            <td><strong>Shipping</strong></td>
-                            <td>Free shipping</td>
+                            <td><strong>24hr Shipping</strong></td>
+                            <td>
+                                <strong class="pull-right">&dollar;10</strong>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -157,14 +135,14 @@
                     </p>
                 </div>
                 <button
-                    type="button"
+                    type="submit"
                     class="btn btn-info text-white py-2 px-4 float-end fw-bold"
                 >
                     Place Order
                 </button>
-            </div>
+            </form>
         </div>
     </main>
 </div>
 
-{% endblock orders %}
+{% endblock body %}
