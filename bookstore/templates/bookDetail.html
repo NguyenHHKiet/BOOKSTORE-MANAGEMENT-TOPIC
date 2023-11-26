@@ -88,7 +88,7 @@
 
                     {{ form.quantity(class='form-control', type='number', min=1, max=post.in_stock(), step=1, value=1) }}
 
-                    {{ form.id(value=post.id) }}
+                    {{ form.id(class='visually-hidden', value=post.id) }}
                 </div>
             {% endif %}
             <div class="panel-footer" style="white-space: nowrap;">

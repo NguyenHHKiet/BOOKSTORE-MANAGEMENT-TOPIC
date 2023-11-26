@@ -18,9 +18,9 @@ def orderBooks():
 
 @orders.route('/checkout', methods=['GET', 'POST'])
 def checkout():
-    # if not current_user.is_authenticated:
-    #     flash(f'You have not been logged in yet. Please login now!', 'warning')
-    #     return redirect(url_for("users.login"))
+    if not current_user.is_authenticated:
+        flash(f'You have not been logged in yet. Please login now!', 'warning')
+        return redirect(url_for("users.login"))
     
     form = Checkout()
 

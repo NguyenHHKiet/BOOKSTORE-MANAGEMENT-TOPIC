@@ -3,4 +3,4 @@ from wtforms import IntegerField, HiddenField
 
 class AddToCart(FlaskForm):
     quantity = IntegerField('Quantity')
-    id = HiddenField('ID')
+    id = IntegerField('ID')
