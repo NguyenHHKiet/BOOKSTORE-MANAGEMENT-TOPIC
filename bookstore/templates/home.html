@@ -8,7 +8,7 @@
             <div class="article-metadata">
                 <nav aria-label="breadcrumb">
                     <ol
-                        class="breadcrumb align-items-center w-100 position-relative"
+                        class="breadcrumb align-items-center w-100 "
                     >
                         <li>
                             <img
@@ -22,26 +22,11 @@
                             />
                         </li>
                         <li class="breadcrumb-item">
-                            <a class="me-2">{{ post.author.name }}</a>
+                            <a class="">{{ post.author.name }}</a>
                         </li>
                         <li class="breadcrumb-item active" aria-current="page">
                             <small class="text-muted"
                                 >{{ post.category.name }}</small
-                            >
-                        </li>
-                        <li class="position-absolute" style="right: 0">
-                            <a
-                                class="btn btn-primary btn-sm"
-                                role="button"
-                                aria-disabled="true"
-                                href="{{url_for('orders.orderBooks')}}"
-                                >Buy Now</a
-                            >
-                            <a
-                                class="btn btn-secondary btn-sm"
-                                role="button"
-                                aria-disabled="true"
-                                >Add Cart</a
                             >
                         </li>
                     </ol>
@@ -66,6 +51,24 @@
                     {{ post.description }}
                 </figcaption>
             </figure>
+        </div>
+        <div class="float-end" style="">
+            {% if post.in_stock() > 0 %}
+                <a
+                    class="btn btn-info text-white btn-sm"
+                    role="button"
+                    aria-disabled="true"
+                    href="{{ url_for('cart.quickAdd', id=post.id) }}"
+                    ><i class="bi bi-cart-plus-fill"></i> Add Cart</a
+                >
+                <a
+                    class="btn btn-primary btn-sm"
+                    role="button"
+                    aria-disabled="true"
+                    href="{{url_for('orders.orderBooks')}}"
+                    >Buy Now</a
+                >
+            {% endif %}
         </div>
     </article>
     {% endfor %}

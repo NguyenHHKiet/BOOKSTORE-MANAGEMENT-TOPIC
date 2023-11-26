@@ -21,11 +21,12 @@ from bookstore.main.routes import main
 from bookstore.users.routes import users
 from bookstore.books.routes import books
 from bookstore.orders.routes import orders
+from bookstore.cart.routes import cart
 app.register_blueprint(main)
 app.register_blueprint(users)
 app.register_blueprint(books)
 app.register_blueprint(orders)
-
+app.register_blueprint(cart)
 from bookstore import admin
 
 

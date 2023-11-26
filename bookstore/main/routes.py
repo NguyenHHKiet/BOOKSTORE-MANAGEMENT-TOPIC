@@ -1,15 +1,17 @@
 from flask import render_template, request, Blueprint, flash, jsonify, make_response, redirect, url_for
 from bookstore import utils
-from bookstore import Book
+from bookstore.models import Book
+from bookstore.cart.utils import handle_cart
 
 main = Blueprint('main', __name__)
 
 @main.route("/")
 @main.route("/home")
 def home():
+    products, grand_total, grand_total_plus_shipping, quantity_total = handle_cart()
     page = request.args.get('page', 1, type=int)
     posts = Book.query.order_by(Book.id.desc()).paginate(page=page, per_page=5)
-    return render_template("home.html", posts=posts)
+    return render_template("home.html", posts=posts, quantity_total=quantity_total)
 
 @main.route("/about")
 def about():

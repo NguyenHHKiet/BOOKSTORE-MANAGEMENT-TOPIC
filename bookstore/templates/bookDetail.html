@@ -73,24 +73,38 @@
         <h3>Our Detail</h3>
         <p class='text-muted'>You can put any information here you'd like.
             <ul class="list-group">
-                <li class="list-group-item list-group-item-light d-flex justify-content-between"><span>Price</span><span class="fw-bold">$ {{post.unit_price}}</span></li>
+                <li class="list-group-item list-group-item-light d-flex justify-content-between"><span>Price</span><span class="fw-bold">$ {{post.unit_price / 100}}</span></li>
                 <li class="list-group-item list-group-item-light d-flex justify-content-between"><span>Status</span><span class="fw-bold">{{post.enable}}</span></li>
                 <li class="list-group-item list-group-item-light d-flex justify-content-between"><span>Stock</span><span class="fw-bold">{{post.available_quantity}}</span></li>
                 <li class="list-group-item list-group-item-light d-flex justify-content-between">etc</li>
             </ul>
-        </p>    
+        </p>
+        
+        <div class="">Quantity</div>
+        <form action="{{ url_for('cart.addToCart') }}" method="POST" class="d-flex justify-content-between gap-2">
+            {% if post.in_stock() > 0 %}
+                <div class="w-100">
+                    {{ form.csrf_token }}
+
+                    {{ form.quantity(class='form-control', type='number', min=1, max=post.in_stock(), step=1, value=1) }}
+
+                    {{ form.id(value=post.id) }}
+                </div>
+            {% endif %}
+            <div class="panel-footer" style="white-space: nowrap;">
+                {% if post.available_quantity > 0 %}
+                <button type="submit" class="btn btn-info text-white">
+                    <i class="bi bi-cart-plus-fill"></i> Add Cart
+                </button>
+                {% endif %}
+            </div>
+        </form>
         <a
-            class="btn btn-primary btn-sm"
+            class="btn btn-primary mt-3 w-100"
             role="button"
             aria-disabled="true"
             href="{{url_for('orders.orderBooks')}}"
             >Buy Now</a
-        >
-        <a
-            class="btn btn-secondary btn-sm"
-            role="button"
-            aria-disabled="true"
-            >Add Cart</a
         >
     <div>
 {% endblock index %}

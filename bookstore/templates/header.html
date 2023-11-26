@@ -65,13 +65,16 @@
             </form>
             <!-- Navbar Right Side -->
             <div class="navbar-nav ms-auto pl-3">
-                <button
+                <a
                     type="button"
                     class="btn btn-primary me-3 btn-sm d-flex align-items-center"
+                    href="{{url_for('cart.cartDetail')}}"
                 >
                     <i class="bi-bag-plus-fill mx-1"></i> Cart
-                    <span class="badge text-bg-danger mx-1">4</span>
-                </button>
+                    <span class="badge text-bg-danger mx-1"
+                        >{{quantity_total}}</span
+                    >
+                </a>
                 {% if current_user.is_authenticated %}
                 <div class="nav-item dropdown">
                     <a
