@@ -30,7 +30,8 @@
                             </div>
                             <div class="form-group">
                                 <label>Email</label>
-                                {{ form.email(class='form-control') }}
+                                {{ form.email(class='form-control',
+                                readonly=true) }}
                             </div>
                         </div>
                     </div>
@@ -52,10 +53,6 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>County</label>
-                                {{ form.state(class='form-control') }}
-                            </div>
-                            <div class="form-group">
-                                <label>Region</label>
                                 {{ form.country(class='form-control') }}
                             </div>
                         </div>

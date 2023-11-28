@@ -1,4 +1,4 @@
-from flask import render_template, request, Blueprint, flash, jsonify, make_response, redirect, url_for
+from flask import render_template, request, Blueprint, flash, jsonify, make_response, redirect, url_for, session
 from bookstore import utils
 from bookstore.models import Book
 from bookstore.cart.utils import handle_cart
@@ -8,6 +8,8 @@ main = Blueprint('main', __name__)
 @main.route("/")
 @main.route("/home")
 def home():
+    if "cart" not in session:
+        session["cart"] = []
     products, grand_total, grand_total_plus_shipping, quantity_total = handle_cart()
     page = request.args.get('page', 1, type=int)
     posts = Book.query.order_by(Book.id.desc()).paginate(page=page, per_page=5)

@@ -11,7 +11,7 @@ app.config.from_pyfile('../config.py')
 # Create database connection object
 db = SQLAlchemy(app)
 
-from bookstore.models import Role, User, Configuration, Book, Category, Author
+from bookstore.models import Role, User, Configuration, Book, Category, Author, PaymentMethod
 
 # Setup Flask-Security
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
@@ -42,10 +42,17 @@ def build_sample_db():
     db.create_all()
 
     with app.app_context():
+        anonymous_user = Role(name="anonymous")
         user_role = Role(name='user')
         super_user_role = Role(name='superuser')
         staff_role = Role(name='staff')
-        db.session.add_all([super_user_role, user_role, staff_role])
+        db.session.add_all([anonymous_user, super_user_role, user_role, staff_role])
+        
+        check = PaymentMethod(name='Check')
+        wireTransfer = PaymentMethod(name='Wire Transfer')
+        payPal = PaymentMethod(name='PayPal')
+        stripe = PaymentMethod(name='Stripe')
+        db.session.add_all([check, wireTransfer, payPal, stripe])
 
         appconfig = Configuration(min_import_quantity=150,
                                   min_stock_quantity=300 ,
