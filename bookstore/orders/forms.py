@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField
+from wtforms import StringField, SelectField, IntegerField
 
 class Checkout(FlaskForm):
     first_name = StringField('First Name')
@@ -8,7 +8,6 @@ class Checkout(FlaskForm):
     email = StringField('Email')
     address = StringField('Address')
     city = StringField('City')
-    state = SelectField('State', choices=[('NBI', 'Nairobi'), ('KMB', 'Kiambu')])
-    country = SelectField('Country', choices=[('CE', 'Central'), ('RV', 'Rift Valley'), ('WE', 'Western')])
-    payment_type = SelectField('Payment Type', choices=[('CK', 'Check'), ('WT', 'Wire Transfer')])
-
+    country = SelectField('Country', choices=[('VN', 'VietNam'), ('KR', 'South Korean'), ('US', 'USA')])
+    payment_type = SelectField('Payment Type', choices=[(1, 'Check'), (2, 'Wire Transfer'), (3, 'PayPal'), (4, 'Stripe')])
+    customer_id = IntegerField('Customer ID', default=0)

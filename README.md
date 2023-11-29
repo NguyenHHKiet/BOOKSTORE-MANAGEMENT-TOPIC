@@ -6,23 +6,17 @@ Flask is a very lightweight Python Web Framework, easily helping beginners learn
 [Flask-Security](https://flask-security-too.readthedocs.io/en/stable/index.html) allows you to quickly add common security mechanisms to your Flask application.
 Many of these features are made possible by integrating various Flask extensions and libraries. They include:
 
-Flask-Login
-
-Flask-Mailman
-
-Flask-Principal
-
-Flask-WTF
-
-itsdangerous
-
-passlib
-
-QRCode
-
-webauthn
-
-authlib
+<ul>
+    <li>Flask-Login</li>
+    <li>Flask-Mailman</li>
+    <li>Flask-Principal</li>
+    <li>Flask-WTF</li>
+    <li>itsdangerous</li>
+    <li>passlib</li>
+    <li>QRCode</li>
+    <li>webauthn</li>
+    <li>authlib</li>
+</ul>
 
 ## Installation
 

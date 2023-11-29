@@ -5,45 +5,38 @@
             <h1>Flask-Admin example</h1>
             <p class="lead">Authentication</p>
             <div style="height: 50vh; width: 100%">
-                <canvas id="myChart"></canvas>
+                <canvas id="myChartLine"></canvas>
             </div>
-            <div style="color: red">{{arg1}}</div>
-            <p>
-                This example shows how you can use
-                <a
-                    href="https://pythonhosted.org/Flask-Security/index.html"
-                    target="_blank"
-                    >Flask-Security</a
-                >
-                for authentication.
-            </p>
-            {% if not current_user.is_authenticated %}
-            <p>
-                You can register as a regular user, or log in as a superuser
-                with the following credentials:
-            </p>
-            <ul>
-                <li>email: <b>admin@example.com</b></li>
-                <li>password: <b>admin</b></li>
-            </ul>
-            <p>
-                <a
-                    class="btn btn-primary"
-                    href="{{ url_for('security.login') }}"
-                    >login</a
-                >
-                <a
-                    class="btn btn-default"
-                    href="{{ url_for('security.register') }}"
-                    >register</a
-                >
-            </p>
-            {% endif %}
-            <p>
-                <a class="btn btn-primary" href="/"
-                    ><i class="glyphicon glyphicon-chevron-left"></i> Back</a
-                >
-            </p>
+            <div class="row mt-5">
+                <div class="col-8" style="width: 100%">
+                    <canvas id="myChartBook"></canvas>
+                </div>
+                <div class="col-4" style="width: 100%">
+                    <div>
+                        Total Payment:
+                        <span style="color: red">&dollar;{{arg1}}</span>
+                    </div>
+                    <div>
+                        Items Count:
+                        <span style="color: black">{{arg2}}</span>
+                    </div>
+                    <p>
+                        This example shows how you can use
+                        <a
+                            href="https://pythonhosted.org/Flask-Security/index.html"
+                            target="_blank"
+                            >Flask-Security</a
+                        >
+                        for authentication.
+                    </p>
+                    <p>
+                        <a class="btn btn-primary" href="/"
+                            ><i class="glyphicon glyphicon-chevron-left"></i>
+                            Back</a
+                        >
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -55,11 +48,25 @@
     const data = {
         labels: labels,
         datasets: [{
-            label: 'Sales',
+            label: 'Orders',
             backgroundColor: 'rgb(255, 99, 132)',
             borderColor: 'rgb(255, 99, 132)',
             data: {{ data | tojson}},
         }]
+    };
+
+    const dataBooks = {
+        labels: {{book_label| tojson}},
+        datasets: [{
+            label: 'My First Dataset',
+            data: {{book_list | tojson}},
+            backgroundColor: {{colors | tojson}},
+            hoverOffset: 4
+        }]
+    };
+    const configBooks = {
+        type: 'doughnut',
+        data: dataBooks,
     };
 
     const config = {
@@ -69,8 +76,12 @@
     };
 
     const myChart = new Chart(
-        document.getElementById('myChart'),
+        document.getElementById('myChartLine'),
         config
+    );
+    const myChartBook = new Chart(
+        document.getElementById('myChartBook'),
+        configBooks
     );
 </script>
 {% endblock body %}

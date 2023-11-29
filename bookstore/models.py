@@ -31,7 +31,7 @@ class User(db.Model, UserMixin):
     last_name = db.Column(db.String(255))
     password = db.Column(db.String(255), nullable=False)
     active = db.Column(db.Boolean())
-    confirmed_at = db.Column(db.DateTime())
+    confirmed_at = db.Column(db.DateTime(), default=func.now())
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('users', lazy='dynamic'))
     fs_uniquifier = db.Column(db.String(64), unique=True, nullable=False)
@@ -131,11 +131,14 @@ class Order(db.Model):
     payment_method_id = Column(Integer, ForeignKey(PaymentMethod.id), nullable=False)
     payment_method =  relationship("PaymentMethod", uselist=False)
     order_details = relationship("OrderDetails", backref="order", lazy=False)
-    customer_id = Column(Integer, ForeignKey(User.id), nullable=False)
-    customer = relationship("User", foreign_keys=customer_id, backref='bought')
-    staff_id = Column(Integer, ForeignKey(User.id), nullable=False)
-    staff = relationship("User", foreign_keys=staff_id, backref='managed')
-    state = db.Column(db.String(20))
+    # Không thể thêm hoặc cập nhật hàng con: ràng buộc khóa ngoại không thành công
+    # customer_id = Column(Integer, ForeignKey(User.id), nullable=False)
+    # customer = relationship("User", foreign_keys=customer_id, backref='bought')
+    invoiceCreator_id = Column(Integer, ForeignKey(User.id), nullable=False)
+    invoiceCreator = relationship("User", foreign_keys=invoiceCreator_id, backref='managed')
+    state = Column(String(20), default='PENDING')
+    reference = Column(String(20))
+    at_delivery = Column(String(255))
     
     def order_total(self):
         return db.session.quey(db.func.sum(OrderDetails.quantity * Book.unit_price)).join(Book).filter(OrderDetails.order_id == self.id).scalar() + 1000

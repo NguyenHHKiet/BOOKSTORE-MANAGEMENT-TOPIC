@@ -2,6 +2,8 @@ from flask import Flask, url_for, redirect, render_template, request, abort
 from flask_admin.contrib import sqla
 from flask_security import current_user
 from flask_admin import expose, BaseView, AdminIndexView
+from bookstore.models import Order, OrderDetails, Book
+import random
 
 # Create customized model view class
 class MyModelView(sqla.ModelView):
@@ -36,7 +38,7 @@ class AuthenticatedView(BaseView):
     def is_accessible(self):
         return (current_user.is_active and
                 current_user.is_authenticated and
-                current_user.has_role('superuser')
+                current_user.has_role('staff')
         )
         
 class UserAdmin(MyModelView):
@@ -67,19 +69,51 @@ class MyAdminIndexView(AdminIndexView):
 class StatsView(AuthenticatedView):
     @expose('/')
     def index(self):
-        arg1 = 'Hello CHART!'
+        data = []
+        labels = []
+        arg1 = 0
+        arg2 = 0
+        itemsCount = {}
+        book_list = []
+        book_label = []
         # Define Plot Data 
-        labels = [
-            'January',
-            'February',
-            'March',
-            'April',
-            'May',
-            'June',
-        ]
-    
-        data = [0, 10, 15, 8, 22, 18, 25]
-        return self.render('admin/chart.html', arg1=arg1, data=data, labels=labels)
+        orders = Order.query.all()
+        orderDetails = OrderDetails.query.all()
+        books = Book.query.all()
+        for order in orders:
+            arg1 = arg1 + order.total_payment
+            data.append(order.total_payment/100)
+            labels.append(order.initiated_date)
+        
+        for od in orderDetails:
+            if od.book_id in itemsCount:
+                print('Key exists')
+                itemsCount[od.book_id] += 1
+            else:
+                print('Key does not exist')
+                itemsCount[od.book_id] = 1
+
+        for book in books:
+            book_label.append(book.name)
+            if book.id in itemsCount:
+                arg2 += itemsCount[book.id]
+                book_list.append(itemsCount[book.id])
+            else:
+                book_list.append(0)
+        
+        colors = []
+        for i in range(len(book_label)):
+            r = random.randint(0, 255)
+            g = random.randint(0, 255)
+            b = random.randint(0, 255)
+            colors.append(f"rgb({r}, {g}, {b})")
+        
+        self._template_args['arg1'] = arg1 / 100
+        self._template_args['arg2'] = arg2
+        self._template_args['book_label'] = book_label
+        self._template_args['book_list'] = book_list
+        self._template_args['colors'] = colors
+        return self.render('admin/chart.html', data=data, labels=labels)
 
 class ProductView(MyModelView):
     column_list = ('id', 'name', 'unit_price','available_quantity','enable','category.name','author.name')
@@ -90,24 +124,26 @@ class ProductView(MyModelView):
     column_searchable_list = ['name']
     column_sortable_list = ['unit_price', 'available_quantity']
     column_filters = ['unit_price', 'name']
-    can_export = True
-    can_view_details = True
 
 class OrderView(MyModelView):
-        column_list = ['initiated_date',
+        column_list = ['id','initiated_date',
                        'cancel_date',
                        'total_payment',
                        'received_money',
                        'paid_date',
                        'delivered_date',
-                       'payment_method',
+                       'payment_method.name',
                        'order_details',
-                       'customer ',
-                       'staff']
+                       'invoiceCreator.email',
+                       'state',
+                       'reference',
+                       'at_delivery']
+        column_labels = {'payment_method.name':'Payment Method', 
+                         'invoiceCreator.email': 'Owner Email',
+                         'order_details': 'Order Details',}
+        column_searchable_list = ['state', 'invoiceCreator.email']
         column_sortable_list = ['initiated_date', 'total_payment']
-        column_searchable_list = ['initiated_date', 'total_payment']
-        can_export = True
-        can_view_details = True
+        column_filters = ['payment_method.name', 'state', 'invoiceCreator.email']
 
 class BookImportView(AuthenticatedView):
     @expose('/')
