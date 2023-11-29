@@ -13,9 +13,9 @@ def orderBooks():
     if not current_user.is_authenticated:
         flash(f'You have not been logged in yet. Please login now!', 'warning')
         return redirect(url_for("users.login", next=request.url))
-    orders = Order.query.order_by(Order.id.desc())
+    orders = Order.query.order_by(Order.id.desc()).filter_by(invoiceCreator_id=current_user.id).all()
     print(orders)
-    return render_template('orderBooks.html', title='Order Books')
+    return render_template('orderBooks.html', title='Order Books', orders=orders)
 
 @orders.route('/checkout', methods=['GET', 'POST'])
 def checkout():
@@ -41,10 +41,12 @@ def checkout():
         order.invoiceCreator_id = current_user.id
         order.at_delivery = form.address.data + ' - ' + form.city.data+ ', ' + form.country.data
 
-        updateUser = User.query.get(current_user.id)
-        updateUser.first_name = form.first_name.data
-        updateUser.last_name = form.last_name.data
-        updateUser.phoneNumber = form.phone_number.data
+        if (current_user.first_name != form.first_name.data 
+            or current_user.last_name != form.last_name.data or current_user.phoneNumber != form.phone_number.data):
+            updateUser = User.query.get(current_user.id)
+            updateUser.first_name = form.first_name.data
+            updateUser.last_name = form.last_name.data
+            updateUser.phoneNumber = form.phone_number.data
 
         form.populate_obj(order)
         db.session.add(order)
@@ -73,5 +75,6 @@ def checkout():
     elif request.method == "GET":
         form.first_name.data = current_user.first_name
         form.last_name.data = current_user.last_name
+        form.phone_number.data = current_user.phoneNumber
         form.email.data = current_user.email
     return render_template('checkout.html', form=form, grand_total=grand_total, grand_total_plus_shipping=grand_total_plus_shipping, quantity_total=quantity_total)

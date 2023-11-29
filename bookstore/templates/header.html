@@ -67,11 +67,13 @@
             <div class="navbar-nav ms-auto pl-3">
                 <a
                     type="button"
-                    class="btn btn-primary me-3 btn-sm d-flex align-items-center"
+                    class="btn btn-primary me-3 btn-sm position-relative h-100"
+                    style="top: 5px"
                     href="{{url_for('cart.cartDetail')}}"
                 >
                     <i class="bi-bag-plus-fill mx-1"></i> Cart
-                    <span class="badge text-bg-danger mx-1"
+                    <span
+                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
                         >{{quantity_total}}</span
                     >
                 </a>
@@ -95,10 +97,19 @@
                             >
                         </li>
                         <li>
+                            {% if current_user.has_role('staff') %}
                             <a
                                 class="dropdown-item"
                                 href="{{url_for('users.staff')}}"
                                 >Staff Action</a
+                            >
+                            {% endif %}
+                        </li>
+                        <li>
+                            <a
+                                class="dropdown-item"
+                                href="{{url_for('orders.orderBooks')}}"
+                                >Order Books</a
                             >
                         </li>
                         <li><hr class="dropdown-divider" /></li>
