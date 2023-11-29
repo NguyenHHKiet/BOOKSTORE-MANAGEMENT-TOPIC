@@ -76,7 +76,7 @@ a.article-title:hover {
     max-width: 1200px;
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(25rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
     gap: 1rem;
 }
 
