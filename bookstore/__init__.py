@@ -1,4 +1,3 @@
-
 import json
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
@@ -24,6 +23,7 @@ from bookstore.users.routes import users
 from bookstore.books.routes import books
 from bookstore.orders.routes import orders
 from bookstore.cart.routes import cart
+
 app.register_blueprint(main)
 app.register_blueprint(users)
 app.register_blueprint(books)
@@ -44,34 +44,41 @@ def build_sample_db():
     db.create_all()
 
     with app.app_context():
+        anonymous_user = Role(name="anonymous")
         user_role = Role(name='user')
         super_user_role = Role(name='superuser')
         staff_role = Role(name='staff')
-        db.session.add_all([super_user_role, user_role, staff_role])
+        db.session.add_all([anonymous_user, super_user_role, user_role, staff_role])
 
         appconfig = Configuration(min_import_quantity=150,
-                                  min_stock_quantity=300 ,
-                                  time_to_end_order=48 ,
-                                  time_to_end_register= 24)
+                                  min_stock_quantity=300,
+                                  time_to_end_order=48,
+                                  time_to_end_register=24)
         db.session.add(appconfig)
 
         test_superuser = user_datastore.create_user(
             first_name='Admin',
             email='admin@example.com',
             password=hash_password('admin'),
-            roles=[staff_role, super_user_role]
+            roles=[staff_role, super_user_role],
+            address='VN',
+            confirmed_at= datetime.datetime.now()
         )
         test_staff = user_datastore.create_user(
             first_name='Staff',
             email='staff@example.com',
             password=hash_password('staff'),
-            roles=[staff_role]
+            roles=[staff_role],
+            address='VN',
+            confirmed_at=datetime.datetime.now()
         )
         test_user = user_datastore.create_user(
             first_name='user',
             email='user@example.com',
             password=hash_password('user'),
-            roles=[user_role]
+            roles=[user_role],
+            address='VN',
+            confirmed_at=datetime.datetime.now()
         )
 
         first_names = [
@@ -93,7 +100,9 @@ def build_sample_db():
                 last_name=last_names[i],
                 email=tmp_email,
                 password=hash_password(tmp_pass),
-                roles=[user_role, ]
+                roles=[user_role, ],
+                address='VN',
+                confirmed_at=datetime.datetime.now()
             )
 
         # Book
@@ -136,7 +145,7 @@ def build_sample_db():
         start_date = datetime.datetime(2023, 1, 1)
         days_increment = 0
         for customer in customer_list:
-            random_number = random.randint(4,7)
+            random_number = random.randint(4, 7)
             order_details = []
             for i in range(0, random_number):
                 b = random.choice(book_list)
@@ -155,9 +164,10 @@ def build_sample_db():
             if days_increment > 30 * 12:
                 days_increment = 0
             days_increment += 20
-            order = utils.create_order(customer.id,staff_id, order_details, random.randint(1,2), initial_date)
-            rand_num = random.randint(1,10)
-            utils.order_paid(random.randint(1000,2000), order.id,order.initiated_date + datetime.timedelta(hours=rand_num) )
+            order = utils.create_order(customer.id, staff_id, order_details, random.randint(1, 2), initial_date)
+            rand_num = random.randint(1, 10)
+            utils.order_paid(random.randint(1000, 2000), order.id,
+                             order.initiated_date + datetime.timedelta(hours=rand_num))
             utils.order_delivered(order.id, order.initiated_date + datetime.timedelta(hours=rand_num + 1))
     return
 

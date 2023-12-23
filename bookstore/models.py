@@ -28,6 +28,7 @@ class User(db.Model, UserMixin):
     image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
     phoneNumber = db.Column(db.String(20))
     first_name = db.Column(db.String(255))
+    address = Column(String(255))
     last_name = db.Column(db.String(255))
     password = db.Column(db.String(255), nullable=False)
     active = db.Column(db.Boolean())
@@ -118,6 +119,8 @@ class ImportDetails(db.Model):
 class PaymentMethod(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(20), nullable=False, unique=True)
+    def __str__(self):
+        return self.name
 
 class Order(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -134,6 +137,8 @@ class Order(db.Model):
     customer = relationship("User", foreign_keys=customer_id, backref='bought')
     staff_id = Column(Integer, ForeignKey(User.id), nullable=False)
     staff = relationship("User", foreign_keys=staff_id, backref='managed')
+    delivery_at = Column(String(255))
+
     
     def order_total(self):
         return db.session.quey(db.func.sum(OrderDetails.quantity * Book.unit_price)).join(Book).filter(OrderDetails.order_id == self.id).scalar() + 1000

@@ -73,7 +73,8 @@ def create_order(customer_id, staff_id, books, payment_method_id, initial_date =
                   customer= customer,
                   staff= staff,
                   total_payment=total_payment,
-                  initiated_date= initial_date
+                  initiated_date= initial_date,
+                  delivery_at=customer.address
                   )
 
     dao.save_order(order)

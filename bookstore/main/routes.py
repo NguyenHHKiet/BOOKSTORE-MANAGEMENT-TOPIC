@@ -8,6 +8,11 @@ main = Blueprint('main', __name__)
 @main.route("/")
 @main.route("/home")
 def home():
+
+    # if "cart" not in session:
+    #     session["cart"] = []
+    # products, grand_total, grand_total_plus_shipping, quantity_total = handle_cart()
+
     page = request.args.get('page', 1, type=int)
     posts = Book.query.order_by(Book.id.desc()).paginate(page=page, per_page=5)
     if current_user.is_authenticated:

@@ -7,6 +7,7 @@ import calendar
 from bookstore import utils
 
 
+
 # Create customized model view class
 class MyModelView(sqla.ModelView):
     column_display_pk = True
@@ -40,7 +41,7 @@ class AuthenticatedView(BaseView):
     def is_accessible(self):
         return (current_user.is_active and
                 current_user.is_authenticated and
-                current_user.has_role('superuser')
+                current_user.has_role('staff')
         )
         
 class UserAdmin(MyModelView):
@@ -59,9 +60,8 @@ class MyAdminIndexView(AdminIndexView):
     def index(self):
         if current_user.has_role('user'):
             return redirect(url_for('main.home'))
-        
-        # if not current_user.is_authenticated:
-        #     return redirect(url_for('security.login'))
+        if not current_user.is_authenticated:
+            return redirect(url_for('security.login'))
         err_msg = 'Hiện tại bạn chưa đăng nhập vào! Vui lòng đăng nhập!'
         self._template_args['err_msg'] = err_msg
         return self.render('admin/index.html')
@@ -69,11 +69,11 @@ class MyAdminIndexView(AdminIndexView):
 class StatsView(AuthenticatedView):
     @expose('/')
     def index(self):
-        # Define Plot Data
         labels = []
         for i in range(1, 13):
             labels.append(calendar.month_name[i])
         data = utils.statistic_revenue()
+
         return self.render('admin/chart.html', data=data, labels=labels)
 
 class ProductView(MyModelView):
@@ -85,24 +85,10 @@ class ProductView(MyModelView):
     column_searchable_list = ['name']
     column_sortable_list = ['unit_price', 'available_quantity']
     column_filters = ['unit_price', 'name']
-    can_export = True
-    can_view_details = True
 
 class OrderView(MyModelView):
-        column_list = ['initiated_date',
-                       'cancel_date',
-                       'total_payment',
-                       'received_money',
-                       'paid_date',
-                       'delivered_date',
-                       'payment_method',
-                       'order_details',
-                       'customer ',
-                       'staff']
+
         column_sortable_list = ['initiated_date', 'total_payment']
-        column_searchable_list = ['initiated_date', 'total_payment']
-        can_export = True
-        can_view_details = True
 
 class BookImportView(AuthenticatedView):
     @expose('/')

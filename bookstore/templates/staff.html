@@ -81,18 +81,24 @@
                 <table class="table content-section">
                     <tbody>
                         <tr>
+                            <td><strong>24hr Shipping</strong></td>
+                            <td>
+                                <strong class="pull-right">&dollar;10</strong>
+                            </td>
                             <td><strong>Total</strong></td>
+                            <td>
+                                <strong class="pull-right"
+                                    >&dollar;{{ grand_total / 100 }}</strong
+                                >
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Total Payment + Shipping</strong></td>
                             <td>
                                 <strong class="pull-right"
                                     >&dollar;{{ grand_total_plus_shipping / 100
                                     }}</strong
                                 >
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>24hr Shipping</strong></td>
-                            <td>
-                                <strong class="pull-right">&dollar;10</strong>
                             </td>
                         </tr>
                     </tbody>

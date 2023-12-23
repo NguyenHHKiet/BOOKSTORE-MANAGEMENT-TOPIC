@@ -1,5 +1,57 @@
-{% extends "layout.html" %} {% block content %}
+{% extends "layout.html" %} {% block body %}
 
 <h1>Welcome to Orders Page</h1>
-
-{% endblock content %}
+<div class="container mt-2">
+    <div class="d-flex justify-content-center row">
+        <div class="col-md-12">
+            <div class="table-responsive table-borderless rounded">
+                <table class="table table-striped">
+                    <thead class="table-primary">
+                        <tr>
+                            <th scope="col">#Order</th>
+                            <th scope="col">Reference</th>
+                            <th scope="col">status</th>
+                            <th scope="col">Created Date</th>
+                            <th scope="col">Cancel Date</th>
+                            <th scope="col">Payment Method</th>
+                            <th scope="col">Total Payment</th>
+                            <th scope="col">At Delivery</th>
+                            <th scope="col">View</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-body">
+                        {% for order in orders %}
+                        <tr class="">
+                            <td scope="row">#{{order.id}}</td>
+                            <td>{{order.reference}}</td>
+                            <td>
+                                {% if order.state == "FULLFILLED" %}<span
+                                    class="badge text-bg-success"
+                                    >{% elif order.state == "CANCEL" %}<span
+                                    class="badge text-bg-danger"
+                                    > {% else %}<span
+                                    class="badge text-bg-primary"
+                                    >  {% endif %} {{order.state}}</span
+                                >
+                            </td>
+                            <td>
+                                {{order.initiated_date.strftime('%Y-%m-%d')}}
+                            </td>
+                            <td>{{order.cancel_date.strftime('%Y-%m-%d')}}</td>
+                            <td>{{order.payment_method.name}}</td>
+                            <td>${{order.total_payment / 100}}</td>
+                            <td>{{order.at_delivery}}</td>
+                            <td>
+                                <a class="btn btn-primary btn-sm" role="button">
+                                    <i class="bi bi-eye-fill"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
