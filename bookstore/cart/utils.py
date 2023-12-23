@@ -6,7 +6,7 @@ def handle_cart():
     grand_total = 0
     index = 0
     quantity_total = 0
-
+    print(session['cart'])
     for item in session['cart']:
         product = Book.query.filter_by(id=item['id']).first()
 

@@ -1,8 +1,9 @@
+import json
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_security import Security, SQLAlchemyUserDatastore
 from flask_security.utils import hash_password
-import random
+import datetime
 
 # Create Flask application
 app = Flask(__name__)
@@ -22,12 +23,13 @@ from bookstore.users.routes import users
 from bookstore.books.routes import books
 from bookstore.orders.routes import orders
 from bookstore.cart.routes import cart
+
 app.register_blueprint(main)
 app.register_blueprint(users)
 app.register_blueprint(books)
 app.register_blueprint(orders)
 app.register_blueprint(cart)
-from bookstore import admin
+from bookstore import admin, utils
 
 
 def build_sample_db():
@@ -47,36 +49,36 @@ def build_sample_db():
         super_user_role = Role(name='superuser')
         staff_role = Role(name='staff')
         db.session.add_all([anonymous_user, super_user_role, user_role, staff_role])
-        
-        check = PaymentMethod(name='Check')
-        wireTransfer = PaymentMethod(name='Wire Transfer')
-        payPal = PaymentMethod(name='PayPal')
-        stripe = PaymentMethod(name='Stripe')
-        db.session.add_all([check, wireTransfer, payPal, stripe])
 
         appconfig = Configuration(min_import_quantity=150,
-                                  min_stock_quantity=300 ,
-                                  time_to_end_order=48 ,
-                                  time_to_end_register= 24)
+                                  min_stock_quantity=300,
+                                  time_to_end_order=48,
+                                  time_to_end_register=24)
         db.session.add(appconfig)
 
         test_superuser = user_datastore.create_user(
             first_name='Admin',
             email='admin@example.com',
             password=hash_password('admin'),
-            roles=[staff_role, super_user_role]
+            roles=[staff_role, super_user_role],
+            address='VN',
+            confirmed_at= datetime.datetime.now()
         )
         test_staff = user_datastore.create_user(
             first_name='Staff',
             email='staff@example.com',
             password=hash_password('staff'),
-            roles=[staff_role]
+            roles=[staff_role],
+            address='VN',
+            confirmed_at=datetime.datetime.now()
         )
         test_user = user_datastore.create_user(
             first_name='user',
             email='user@example.com',
             password=hash_password('user'),
-            roles=[user_role]
+            roles=[user_role],
+            address='VN',
+            confirmed_at=datetime.datetime.now()
         )
 
         first_names = [
@@ -98,49 +100,75 @@ def build_sample_db():
                 last_name=last_names[i],
                 email=tmp_email,
                 password=hash_password(tmp_pass),
-                roles=[user_role, ]
+                roles=[user_role, ],
+                address='VN',
+                confirmed_at=datetime.datetime.now()
             )
-        
-        book_names = [
-            'No Family', 'Miserables', 'The sound of birds singing in the thorn bush', 'To kill a mockingbird', 'Crime and Punishment', 'The Alchemist', 'Little Prince', 'Two Fates',
-            'Godfather', 'Great Gatsby', 'Nauy forest', 'Three Great Teachers', 'Monk Sells Ferrari'
-        ]
-        category_names = [
-            'Novel', 'Literature'
-        ]
-        author_names = [
-            'Hector Malot', 'Victor Hugo', 'Colleen McCulough', 'Harper Lee', 'Fyodor Dostoevsky', 'Paulo Coelho', 'Antoine Saint – Exupéry', 'Jeffrey Archer',
-            'Mario Puzo', 'Scott Fitzgerald', 'Haruki Murakami', 'Robin Sharam'
-        ]
-        
-        # Create and add categories to the database
-        for name in category_names:
-            category = Category(name=name)
-            db.session.add(category)
-        db.session.commit()
 
-        # Create and add authors to the database
-        for name in author_names:
-            author = Author(name=name)
-            db.session.add(author)
+        # Book
+        with open('bookstore/static/data_import/book_data.json', 'rb') as f:
+            data = json.load(f)
+            for book in data:
+                name = str(book['title']).strip()
+                category = str(book['category']).strip()
+                author = str(book['author']).strip()
+                description = str(book['description']).strip()
+                image = str(book['image']).strip()
+                db_category = Category.query.filter_by(name=category).first()
+                if not db_category:
+                    db_category = Category(name=category)
+                    db.session.add(db_category)
+                db_author = Author.query.filter_by(name=author).first()
+                if not db_author:
+                    db_author = Author(name=author)
+                    db.session.add(db_author)
+                db.session.commit()
+                new_book = Book(name=name,
+                                category=db_category,
+                                author=db_author,
+                                description=description,
+                                image_src=image,
+                                unit_price=random.randint(20, 100),
+                                available_quantity=random.randint(150, 200),
+                                enable=True)
+                db.session.add(new_book)
+            db.session.commit()
+        # payment method
+        in_cash = PaymentMethod(name='CASH')
+        internet_banking = PaymentMethod(name='BANKING')
+        db.session.add_all([in_cash, internet_banking])
         db.session.commit()
-        
-        # Retrieve IDs of categories and authors from the database
-        category_ids = [category.id for category in Category.query.all()]
-        author_ids = [author.id for author in Author.query.all()]
-            
-        for i in range(len(book_names)):
-            book = Book(
-                name=book_names[i],
-                unit_price=random.randint(100, 1000),
-                available_quantity=random.randint(50, 255),
-                category_id=random.choice(category_ids),
-                author_id=random.choice(author_ids),
-                enable=True
-            )
-            db.session.add(book)
-            
-        db.session.commit()
+        # Order
+        staff_id = 2
+        customer_list = User.query.filter(User.id > 2)
+        book_list = Book.query.all()
+        start_date = datetime.datetime(2023, 1, 1)
+        days_increment = 0
+        for customer in customer_list:
+            random_number = random.randint(4, 7)
+            order_details = []
+            for i in range(0, random_number):
+                b = random.choice(book_list)
+                q = random.randint(1, 5)
+                f = True
+                for o in order_details:
+                    if o['id'] == b.id:
+                        o['quantity'] += q
+                        f = False
+                if f:
+                    detail = {}
+                    detail['id'] = b.id
+                    detail['quantity'] = q
+                    order_details.append(detail)
+            initial_date = start_date + datetime.timedelta(days=days_increment)
+            if days_increment > 30 * 12:
+                days_increment = 0
+            days_increment += 20
+            order = utils.create_order(customer.id, staff_id, order_details, random.randint(1, 2), initial_date)
+            rand_num = random.randint(1, 10)
+            utils.order_paid(random.randint(1000, 2000), order.id,
+                             order.initiated_date + datetime.timedelta(hours=rand_num))
+            utils.order_delivered(order.id, order.initiated_date + datetime.timedelta(hours=rand_num + 1))
     return
 
 # ImportError: cannot import name 'url_decode' from 'werkzeug.urls' 

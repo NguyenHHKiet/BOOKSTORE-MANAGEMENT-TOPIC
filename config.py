@@ -7,11 +7,17 @@ SECRET_KEY = 'c007d6402c1b77b1fac427a381d995fd'
 DEBUG = True
 
 # Create in-memory database
-DATABASE_FILE = 'bookstore'
-SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:@localhost/'+ DATABASE_FILE +'?charset=utf8mb4' # Non_password_MySQL
+
+# DATABASE_FILE = 'bookstore'
+# SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:@localhost/'+ DATABASE_FILE +'?charset=utf8mb4' # Non_password_MySQL
+SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://admin:%s@localhost/bookstore?charset=utf8mb4' % quote('admin')
+
+# DATABASE_FILE = 'bookstore'
+# SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:@localhost/'+ DATABASE_FILE +'?charset=utf8mb4' # Non_password_MySQL
 # SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://admin:%s@localhost/bookstore?charset=utf8mb4' % quote('admin')
 # SQLALCHEMY_TRACK_MODIFICATIONS = True
 SQLALCHEMY_TRACK_MODIFICATIONS = False
+
 
 # Flask-Security config
 SECURITY_URL_PREFIX = "/admin"

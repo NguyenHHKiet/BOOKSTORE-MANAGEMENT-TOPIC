@@ -18,7 +18,7 @@
                                     height: 30px;
                                     margin: 0px 10px 0px 0;
                                 "
-                                src="{{url_for('static', filename='profile_pics/' + post.image_src)}}"
+                                src="{{post.image_src}}"
                             />
                         </li>
                         <li class="breadcrumb-item">
@@ -42,7 +42,7 @@
             <figure class="figure w-100">
                 <div class="ratio ratio-1x1">
                     <img
-                        src="{{url_for('static', filename='profile_pics/' + post.image_src)}}"
+                        src="{{post.image_src}}"
                         class="figure-img img-fluid rounded"
                         alt="..."
                     />

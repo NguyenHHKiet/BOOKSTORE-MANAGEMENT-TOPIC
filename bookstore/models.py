@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, Boolean, String, ForeignKey, DateTime, func
 from sqlalchemy.orm import relationship
-
+from sqlalchemy.dialects.mysql import LONGTEXT
 from bookstore import db
 from flask_security import RoleMixin, UserMixin
 
@@ -28,10 +28,11 @@ class User(db.Model, UserMixin):
     image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
     phoneNumber = db.Column(db.String(20))
     first_name = db.Column(db.String(255))
+    address = Column(String(255))
     last_name = db.Column(db.String(255))
     password = db.Column(db.String(255), nullable=False)
     active = db.Column(db.Boolean())
-    confirmed_at = db.Column(db.DateTime(), default=func.now())
+    confirmed_at = db.Column(db.DateTime())
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('users', lazy='dynamic'))
     fs_uniquifier = db.Column(db.String(64), unique=True, nullable=False)
@@ -59,15 +60,14 @@ class RegisterCode(db.Model):
 
 class Category(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(20), nullable=False, unique=True)
+    name = Column(String(255), nullable=False, unique=True)
     books = relationship("Book", backref='category', lazy=True)
     def __str__(self):
         return self.name
 
 class Author(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(50), nullable=False, unique=True)
-    pseudonym = Column(String(50), nullable=True, unique=True)
+    name = Column(String(255), nullable=False, unique=True)
     books = relationship("Book", backref='author', lazy=True)
     def __str__(self):
         return self.name
@@ -76,16 +76,16 @@ class Author(db.Model):
 
 class Book(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(100), nullable=False, unique=True)
+    name = Column(String(255), nullable=False, unique=True)
     unit_price = Column(Integer, nullable=False, default=0)
     available_quantity = Column(Integer, nullable=False)
-    image_src = Column(String(50), nullable=True, default='default.jpg')
+    image_src = Column(LONGTEXT, nullable=True, default='default.jpg')
     category_id = Column(Integer, ForeignKey(Category.id), nullable=False)
     author_id = Column(Integer, ForeignKey(Author.id), nullable=False)
     import_details = relationship("ImportDetails", backref='book', lazy=True)
     order_details = relationship("OrderDetails", backref= 'book', lazy= True)
     enable = Column(Boolean, nullable=False, default=False)
-    description = db.Column(db.String(500))
+    description = db.Column(LONGTEXT)
     
     def in_stock(self):
         if db.session:
@@ -119,10 +119,12 @@ class ImportDetails(db.Model):
 class PaymentMethod(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(20), nullable=False, unique=True)
+    def __str__(self):
+        return self.name
 
 class Order(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
-    initiated_date = Column(DateTime, nullable=False, default=func.now())
+    initiated_date = Column(DateTime, nullable=False)
     cancel_date = Column(DateTime,nullable=False)
     total_payment = Column(Integer, nullable=False)
     received_money = Column(Integer, nullable=True)
@@ -131,14 +133,12 @@ class Order(db.Model):
     payment_method_id = Column(Integer, ForeignKey(PaymentMethod.id), nullable=False)
     payment_method =  relationship("PaymentMethod", uselist=False)
     order_details = relationship("OrderDetails", backref="order", lazy=False)
-    # Không thể thêm hoặc cập nhật hàng con: ràng buộc khóa ngoại không thành công
-    # customer_id = Column(Integer, ForeignKey(User.id), nullable=False)
-    # customer = relationship("User", foreign_keys=customer_id, backref='bought')
-    invoiceCreator_id = Column(Integer, ForeignKey(User.id), nullable=False)
-    invoiceCreator = relationship("User", foreign_keys=invoiceCreator_id, backref='managed')
-    state = Column(String(20), default='PENDING')
-    reference = Column(String(20))
-    at_delivery = Column(String(255))
+    customer_id = Column(Integer, ForeignKey(User.id), nullable=False)
+    customer = relationship("User", foreign_keys=customer_id, backref='bought')
+    staff_id = Column(Integer, ForeignKey(User.id), nullable=False)
+    staff = relationship("User", foreign_keys=staff_id, backref='managed')
+    delivery_at = Column(String(255))
+
     
     def order_total(self):
         return db.session.quey(db.func.sum(OrderDetails.quantity * Book.unit_price)).join(Book).filter(OrderDetails.order_id == self.id).scalar() + 1000
