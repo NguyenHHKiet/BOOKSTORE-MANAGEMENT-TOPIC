@@ -7,7 +7,7 @@ from flask import url_for
 # Create admin
 admin = Admin(
     app,
-    'BookStore: Auth',
+    'A+ CNPM',
     base_template='my_master.html',
     template_mode='bootstrap4',
     index_view=MyAdminIndexView()

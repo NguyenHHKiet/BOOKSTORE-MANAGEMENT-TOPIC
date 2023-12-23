@@ -1,7 +1,11 @@
 from flask import Flask, url_for, redirect, render_template, request, abort
 from flask_admin.contrib import sqla
+from flask_admin.contrib.sqla import ModelView
 from flask_security import current_user
 from flask_admin import expose, BaseView, AdminIndexView
+import calendar
+from bookstore import utils
+
 
 # Create customized model view class
 class MyModelView(sqla.ModelView):
@@ -58,28 +62,19 @@ class MyAdminIndexView(AdminIndexView):
         
         # if not current_user.is_authenticated:
         #     return redirect(url_for('security.login'))
-        arg1 = 'Hello INDEX!'
         err_msg = 'Hiện tại bạn chưa đăng nhập vào! Vui lòng đăng nhập!'
         self._template_args['err_msg'] = err_msg
-        self._template_args['arg1'] = arg1
         return self.render('admin/index.html')
     
 class StatsView(AuthenticatedView):
     @expose('/')
     def index(self):
-        arg1 = 'Hello CHART!'
-        # Define Plot Data 
-        labels = [
-            'January',
-            'February',
-            'March',
-            'April',
-            'May',
-            'June',
-        ]
-    
-        data = [0, 10, 15, 8, 22, 18, 25]
-        return self.render('admin/chart.html', arg1=arg1, data=data, labels=labels)
+        # Define Plot Data
+        labels = []
+        for i in range(1, 13):
+            labels.append(calendar.month_name[i])
+        data = utils.statistic_revenue()
+        return self.render('admin/chart.html', data=data, labels=labels)
 
 class ProductView(MyModelView):
     column_list = ('id', 'name', 'unit_price','available_quantity','enable','category.name','author.name')
@@ -114,8 +109,9 @@ class BookImportView(AuthenticatedView):
     def index(self):
        return self.render('/admin/import.html')
 
-class ConfigurationView(MyModelView):
+class ConfigurationView(ModelView):
     column_list = ['min_import_quantity', 'min_stock_quantity', 'time_to_end_order', 'time_to_end_register']
     can_delete = False
     can_create = False
-
+    can_export = False
+    can_edit = True
