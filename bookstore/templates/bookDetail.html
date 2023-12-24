@@ -16,7 +16,7 @@
                                 height: 30px;
                                 margin: 0px 10px 0px 0;
                             "
-                            src="{{url_for('static', filename='profile_pics/' + post.image_src)}}"
+                            src="{{ post.image_src}}"
                         />
                     </li>
                     <li class="breadcrumb-item">
@@ -34,7 +34,7 @@
         <figure class="figure w-100 mt-2">
             <div class="">
                 <img
-                    src="{{url_for('static', filename='profile_pics/' + post.image_src)}}"
+                    src="{{ post.image_src}}"
                     class="figure-img img-fluid img-thumbnail w-100 object-fit-cover border rounded shadow"
                     style="
                         height: 30rem;
@@ -73,8 +73,8 @@
         <h3>Our Detail</h3>
         <p class='text-muted'>You can put any information here you'd like.
             <ul class="list-group">
-                <li class="list-group-item list-group-item-light d-flex justify-content-between"><span>Price</span><span class="fw-bold">$ {{post.unit_price / 100}}</span></li>
-                <li class="list-group-item list-group-item-light d-flex justify-content-between"><span>Status</span><span class="fw-bold">{{post.enable}}</span></li>
+                <li class="list-group-item list-group-item-light d-flex justify-content-between"><span>Price</span><span class="fw-bold">{{ "{:,.0f}".format(post.unit_price) }} VNĐ</span></li>
+                <li class="list-group-item list-group-item-light d-flex justify-content-between"><span>Status</span><span class="fw-bold">{% if post.enable %} {{ "Available" }} {% else %} {{ "Not availble" }} {% endif %}</span></li>
                 <li class="list-group-item list-group-item-light d-flex justify-content-between"><span>Stock</span><span class="fw-bold">{{post.available_quantity}}</span></li>
                 <li class="list-group-item list-group-item-light d-flex justify-content-between">etc</li>
             </ul>
@@ -106,5 +106,5 @@
             href="{{url_for('orders.orderBooks')}}"
             >Buy Now</a
         >
-    <div>
+    </div>
 {% endblock index %}

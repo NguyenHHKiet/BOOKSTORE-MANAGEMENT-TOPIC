@@ -87,8 +87,9 @@ class ProductView(MyModelView):
     column_filters = ['unit_price', 'name']
 
 class OrderView(MyModelView):
+    column_sortable_list = ['initiated_date', 'total_payment']
 
-        column_sortable_list = ['initiated_date', 'total_payment']
+
 
 class BookImportView(AuthenticatedView):
     @expose('/')

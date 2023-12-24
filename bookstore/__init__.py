@@ -5,6 +5,8 @@ from flask_security import Security, SQLAlchemyUserDatastore
 from flask_security.utils import hash_password
 import datetime
 
+
+
 # Create Flask application
 app = Flask(__name__)
 app.config.from_pyfile('../config.py')
@@ -53,32 +55,40 @@ def build_sample_db():
         appconfig = Configuration(min_import_quantity=150,
                                   min_stock_quantity=300,
                                   time_to_end_order=48,
-                                  time_to_end_register=24)
+                                  time_to_end_register=24,
+                                  quick_ship=50000
+                                  )
         db.session.add(appconfig)
 
         test_superuser = user_datastore.create_user(
             first_name='Admin',
+            last_name= '2023',
             email='admin@example.com',
             password=hash_password('admin'),
             roles=[staff_role, super_user_role],
             address='VN',
-            confirmed_at= datetime.datetime.now()
+            confirmed_at= datetime.datetime.now(),
+            phone_number ="0795648319"
         )
         test_staff = user_datastore.create_user(
             first_name='Staff',
+            last_name='2023',
             email='staff@example.com',
             password=hash_password('staff'),
             roles=[staff_role],
             address='VN',
-            confirmed_at=datetime.datetime.now()
+            confirmed_at=datetime.datetime.now(),
+            phone_number="0798546948"
         )
         test_user = user_datastore.create_user(
             first_name='user',
+            last_name='2023',
             email='user@example.com',
             password=hash_password('user'),
             roles=[user_role],
             address='VN',
-            confirmed_at=datetime.datetime.now()
+            confirmed_at=datetime.datetime.now(),
+            phone_number="0986498464"
         )
 
         first_names = [
@@ -95,6 +105,10 @@ def build_sample_db():
         for i in range(len(first_names)):
             tmp_email = first_names[i].lower() + "." + last_names[i].lower() + "@example.com"
             tmp_pass = ''.join(random.choice(string.ascii_lowercase + string.digits) for i in range(10))
+            phone = "0"
+            for k in range(0,9):
+                phone += str(random.randint(6,9))
+
             user_datastore.create_user(
                 first_name=first_names[i],
                 last_name=last_names[i],
@@ -102,7 +116,8 @@ def build_sample_db():
                 password=hash_password(tmp_pass),
                 roles=[user_role, ],
                 address='VN',
-                confirmed_at=datetime.datetime.now()
+                confirmed_at=datetime.datetime.now(),
+                phone_number = phone
             )
 
         # Book
@@ -128,7 +143,7 @@ def build_sample_db():
                                 author=db_author,
                                 description=description,
                                 image_src=image,
-                                unit_price=random.randint(20, 100),
+                                unit_price=random.randint(5,15) * 1000,
                                 available_quantity=random.randint(150, 200),
                                 enable=True)
                 db.session.add(new_book)
@@ -166,8 +181,8 @@ def build_sample_db():
             days_increment += 20
             order = utils.create_order(customer.id, staff_id, order_details, random.randint(1, 2), initial_date)
             rand_num = random.randint(1, 10)
-            utils.order_paid(random.randint(1000, 2000), order.id,
-                             order.initiated_date + datetime.timedelta(hours=rand_num))
+            utils.order_paid(order.total_payment, order.id,
+                                              order.initiated_date + datetime.timedelta(hours=rand_num))
             utils.order_delivered(order.id, order.initiated_date + datetime.timedelta(hours=rand_num + 1))
     return
 
