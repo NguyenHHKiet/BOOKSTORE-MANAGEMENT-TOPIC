@@ -1,7 +1,7 @@
 from sqlalchemy import text
-
 from bookstore import db
 from bookstore.models import Configuration, ImportTicket, Book, Category, Author, PaymentMethod, User, Order
+
 
 
 def get_configuration():
@@ -39,8 +39,15 @@ def save_ticket_details(ticket_details):
 def get_payment_method_by_id(id):
     return PaymentMethod.query.get(id)
 
+def get_payment_method_all():
+    return PaymentMethod.query.all()
+
 def get_user_by_id(id):
     return User.query.get(id)
+
+def save_user(user):
+    db.session.add(user)
+    db.session.commit()
 
 def get_book_by_id(id):
     return Book.query.get(id)
@@ -56,6 +63,8 @@ def save_order_details(order_detail):
 def get_order_by_id(order_id):
     return Order.query.get(order_id)
 
+def get_orders_by_customer_id(customer_id):
+    return Order.query.filter_by(customer_id=customer_id).order_by(Order.id.asc()).all()
 
 def stat_book_by_month(month):
     return db.session.execute(text("SELECT book.name, category.name AS category,  SUM(order_details.quantity) AS quantity "

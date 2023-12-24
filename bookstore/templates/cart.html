@@ -7,7 +7,7 @@
     <table class="table table-striped ">
         <thead>
             <tr>
-                <th scope="col">#Image</th>
+                <th scope="col">Image</th>
                 <th scope="col">Book Name</th>
                 <th scope="col">Quantity</th>
                 <th scope="col">Total</th>
@@ -20,7 +20,7 @@
                 <th>
                     <div class="ratio ratio-1x1" style="width: 5rem; height: 5rem">
                         <img
-                            src="{{url_for('static', filename='profile_pics/' + product['image_src'])}}"
+                            src="{{ product['image_src']}}"
                             class="figure-img img-fluid rounded"
                             alt="..."
                         />
@@ -32,15 +32,17 @@
                         href="{{url_for('books.bookDetail', book_id=product.id)}}"
                         >{{ product['name'] }}</a
                     >
-                    <p>&dollar;{{ product['unit_price'] / 100 }}</p>
+                    <p>{{ "{:,.0f}".format(product.unit_price) }} VNĐ</p>
                 </th>
                 <th>
                     <p>{{ product['quantity'] }}</p>
+                </th>
+
                 </div>
                 <th>
                     <p>
                         <strong
-                            >&dollar;{{ product['total'] / 100 }}</strong
+                            >{{ "{:,.0f}".format(product.total) }} VNĐ</strong
                         >
                     </p>
                 </th>
@@ -66,20 +68,19 @@
                 <p class=" d-flex justify-content-between">
                     {{ quantity_total }} Items
                     <strong class="pull-right"
-                        >&dollar;{{ grand_total / 100 }}</strong
+                        >{{ "{:,.0f}".format(grand_total) }} VNĐ</strong
                     >
                 </p>
                 <p class=" d-flex justify-content-between">
                     24hr Shipping
-                    <strong class="pull-right">&dollar;10</strong>
+                    <strong class="pull-right">{{ "{:,.0f}".format(quick_ship) }} VNĐ</strong>
                 </p>
             </li>
             <li class="list-group-item ">
                 <p class="d-flex justify-content-between">
                     Total
                     <strong class="pull-right"
-                        >&dollar;{{ grand_total_plus_shipping / 100
-                        }}</strong
+                        >{{ "{:,.0f}".format(grand_total_plus_shipping) }} VNĐ</strong
                     >
                 </p>
                 <div class="panel-footer d-flex justify-content-between align-items-center">

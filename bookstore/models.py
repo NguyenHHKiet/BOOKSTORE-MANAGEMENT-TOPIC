@@ -26,7 +26,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(255), unique=True)
     username = db.Column(db.String(64), nullable=False, default=email)
     image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
-    phoneNumber = db.Column(db.String(20))
+    phone_number = db.Column(db.String(20))
     first_name = db.Column(db.String(255))
     address = Column(String(255))
     last_name = db.Column(db.String(255))
@@ -47,6 +47,7 @@ class Configuration(db.Model):
     min_stock_quantity = Column(Integer, nullable=False)
     time_to_end_order = Column(Integer, nullable=False)
     time_to_end_register = Column(Integer, nullable=False)
+    quick_ship = Column(Integer, nullable=False)
 
 
 

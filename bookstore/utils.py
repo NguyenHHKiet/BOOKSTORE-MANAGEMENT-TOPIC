@@ -1,10 +1,11 @@
 
 import os
+from datetime import timedelta, datetime
+
 import pandas
-from flask import current_app, jsonify
-from datetime import  datetime, timedelta
+from flask import current_app
 from bookstore import dao
-from bookstore.models import ImportTicket, Category, Author, Book, ImportDetails, Order, OrderDetails
+from bookstore.models import ImportTicket, Category, Author, Book, ImportDetails, OrderDetails, Order
 
 
 def import_book(excel):
@@ -51,54 +52,6 @@ def import_book(excel):
         ticket_details = ImportDetails(quantity=quantity, book=db_book, import_ticket=ticket)
         dao.save_ticket_details(ticket_details=ticket_details)
 
-def create_order(customer_id, staff_id, books, payment_method_id, initial_date = datetime.now()):
-    configuration = dao.get_configuration()
-    customer = dao.get_user_by_id(customer_id)
-    staff = dao.get_user_by_id(staff_id)
-    payment_method = dao.get_payment_method_by_id(payment_method_id)
-    # create order details
-    order_details = []
-    total_payment = 0
-    for ordered_book in  books:
-        book = dao.get_book_by_id(ordered_book['id'])
-        if book is not None:
-            detail = OrderDetails(unit_price=book.unit_price, quantity=ordered_book['quantity'], book=book)
-            total_payment += book.unit_price * ordered_book['quantity']
-            order_details.append(detail)
-            book.available_quantity -= ordered_book['quantity']
-            dao.save_book(book)
-    # create order
-    order = Order(cancel_date=initial_date + timedelta(hours=configuration.time_to_end_order),
-                  payment_method= payment_method,
-                  customer= customer,
-                  staff= staff,
-                  total_payment=total_payment,
-                  initiated_date= initial_date,
-                  delivery_at=customer.address
-                  )
-
-    dao.save_order(order)
-    for od in order_details:
-        od.order = order
-        dao.save_order_details(od)
-    return order
-
-def order_paid(received_money, order_id, paid_date = datetime.now()):
-    order = dao.get_order_by_id(order_id)
-    if order is None:
-        return -1
-    order.received_money = received_money
-    order.paid_date = paid_date
-    dao.save_order(order)
-    return 0
-
-def order_delivered(order_id, delivered_date = datetime.now()):
-    order = dao.get_order_by_id(order_id)
-    if order is None:
-        return -1
-    order.delivered_date =delivered_date
-    dao.save_order(order)
-    return 0
 
 def statistic_revenue():
     return [data[0] for data in dao.statistic_revenue()]
@@ -143,3 +96,55 @@ def statistic_category_by_month(month):
         data.append(temp)
         index +=1
     return data
+
+
+def create_order(customer_id, staff_id, books, payment_method_id, initial_date = datetime.now()):
+    configuration = dao.get_configuration()
+    customer = dao.get_user_by_id(customer_id)
+    staff = dao.get_user_by_id(staff_id)
+    payment_method = dao.get_payment_method_by_id(payment_method_id)
+    # create order details
+    order_details = []
+    total_payment = 0
+    for ordered_book in  books:
+        book = dao.get_book_by_id(ordered_book['id'])
+        if book is not None:
+            detail = OrderDetails(unit_price=book.unit_price, quantity=ordered_book['quantity'], book=book)
+            total_payment += book.unit_price * ordered_book['quantity']
+            order_details.append(detail)
+            book.available_quantity -= ordered_book['quantity']
+            dao.save_book(book)
+    # create order
+    order = Order(cancel_date=initial_date + timedelta(hours=configuration.time_to_end_order),
+                  payment_method= payment_method,
+                  customer= customer,
+                  staff= staff,
+                  total_payment=total_payment,
+                  initiated_date= initial_date,
+                  delivery_at=customer.address
+                  )
+
+    dao.save_order(order)
+    for od in order_details:
+        od.order = order
+        dao.save_order_details(od)
+    return order
+
+
+def order_paid(received_money, order_id, paid_date = datetime.now()):
+    order = dao.get_order_by_id(order_id)
+    if order is None:
+        return -1
+    order.received_money = received_money
+    order.paid_date = paid_date
+    dao.save_order(order)
+    return 0
+
+
+def order_delivered(order_id, delivered_date = datetime.now()):
+    order = dao.get_order_by_id(order_id)
+    if order is None:
+        return -1
+    order.delivered_date =delivered_date
+    dao.save_order(order)
+    return 0
