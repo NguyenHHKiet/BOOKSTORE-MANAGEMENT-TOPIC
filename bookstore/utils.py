@@ -6,18 +6,19 @@ import pandas
 from flask import current_app
 from bookstore import dao
 from bookstore.models import ImportTicket, Category, Author, Book, ImportDetails, OrderDetails, Order
-
+import cloudinary.uploader
 
 def import_book(excel):
     # save file
-    file_path = os.path.join(current_app.root_path, 'static/data_import', excel.filename)
-    excel.save(file_path)
+
+    response = cloudinary.uploader.upload(excel, resource_type ="auto", format="xlsx")
+    file_url = response['secure_url']
     # read data
     data = pandas.read_excel(excel)
     # handle new book data
     # save ticket
-    ticket = ImportTicket()
-    dao.save_ticket(ticket=ticket)
+    ticket = dao.save_ticket(url=file_url)
+
     # get bookstore configuration
     configuration = dao.get_configuration()
     for index, row in data.iterrows():

@@ -96,8 +96,8 @@ class BookImportView(AuthenticatedView):
     def index(self):
        return self.render('/admin/import.html')
 
-class ConfigurationView(ModelView):
-    column_list = ['min_import_quantity', 'min_stock_quantity', 'time_to_end_order', 'time_to_end_register']
+class ConfigurationView(MyModelView):
+
     can_delete = False
     can_create = False
     can_export = False

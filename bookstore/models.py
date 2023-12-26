@@ -25,7 +25,7 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), unique=True)
     username = db.Column(db.String(64), nullable=False, default=email)
-    image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
+    image_file = db.Column(db.String(255), nullable=False, default='https://res.cloudinary.com/ddgtjayoj/image/upload/v1703609574/nwgptms1x2n1pa4k5hvo.jpg')
     phone_number = db.Column(db.String(20))
     first_name = db.Column(db.String(255))
     address = Column(String(255))
@@ -80,7 +80,7 @@ class Book(db.Model):
     name = Column(String(255), nullable=False, unique=True)
     unit_price = Column(Integer, nullable=False, default=0)
     available_quantity = Column(Integer, nullable=False)
-    image_src = Column(LONGTEXT, nullable=True, default='default.jpg')
+    image_src = Column(LONGTEXT, nullable=True, default='https://res.cloudinary.com/ddgtjayoj/image/upload/v1703609574/nwgptms1x2n1pa4k5hvo.jpg')
     category_id = Column(Integer, ForeignKey(Category.id), nullable=False)
     author_id = Column(Integer, ForeignKey(Author.id), nullable=False)
     import_details = relationship("ImportDetails", backref='book', lazy=True)
@@ -108,6 +108,7 @@ class Book(db.Model):
 
 class ImportTicket(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
+    excel_url = Column(String(255), nullable=False)
     import_date = Column(DateTime, nullable=False, default=func.now())
     details = relationship("ImportDetails", backref='import_ticket', lazy=False)
 
