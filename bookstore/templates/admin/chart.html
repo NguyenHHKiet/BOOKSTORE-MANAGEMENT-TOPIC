@@ -64,7 +64,7 @@
                 </select>
             </div>
             <div style="margin-top: 10px">
-                <button type="submit" class="btn btn-primary" onclick="handleExport()">Export</button>
+                <button type="submit" class="btn btn-primary" onclick="handleExport(this)">Export</button>
             </div>
 
         </div>
@@ -108,10 +108,11 @@
                     options: {maintainAspectRatio: false}
                 };
             } else if (type == 'category' | type == 'book') {
-
+                label = type == "category" ? "VNĐ" : "Quantity"
                 const chart_data = {
                     labels: labels,
                     datasets: [{
+                        label: label,
                         data: data
                     }]
                 }
@@ -150,18 +151,20 @@
         }
 
         async function handleChangeMonth(element) {
+            element.disabled = true
             const month = element.options[element.selectedIndex].value
             const type_element = document.getElementById("type")
             const type = type_element.options[type_element.selectedIndex].value
             const data = await getStatisticData(type, month)
             const [chart_data, labels] = createChartData(data, type)
             drawChart(chart_data, labels, type)
-            const unit = type == 'category' ? '(revenue)' : '(quantity)'
-            const typeTitle = `Statistic by ${type} - ${getMonthName(month)} ${unit}`
+            const typeTitle = `Statistic by ${type} - ${getMonthName(month)}`
             changeTypeTitle(typeTitle)
+            element.disabled = false
         }
 
         async function handleChangeType(element) {
+            element.disabled = true
             const month_element = document.getElementById("month")
             const type = element.options[element.selectedIndex].value
             if (type === "overall") {
@@ -179,13 +182,14 @@
                 const data = await getStatisticData(type, month)
                 const [chart_data, labels] = createChartData(data, type, month)
                 drawChart(chart_data, labels, type)
-                const unit = type == 'category' ? '(revenue)' : '(quantity)'
-                const typeTitle = `Statistic by ${type} - ${getMonthName(month)} ${unit}`
+                const typeTitle = `Statistic by ${type} - ${getMonthName(month)}`
                 changeTypeTitle(typeTitle)
             }
+            element.disabled = false
         }
 
-        async function handleExport() {
+        async function handleExport(element) {
+            element.disabled = true
             const month_element = document.getElementById("month")
             const month = month_element.options[month_element.selectedIndex].value
             const type_element = document.getElementById("type")
@@ -240,6 +244,7 @@
             XLSX.utils.sheet_add_json(worksheet, keyOrderedData, {origin: 'A2', skipHeader: true});
             XLSX.utils.book_append_sheet(workbook, worksheet, "Thống kê")
             XLSX.writeFile(workbook, filename)
+            element.disabled = false
         }
 
         function getStatisticData(type, month) {

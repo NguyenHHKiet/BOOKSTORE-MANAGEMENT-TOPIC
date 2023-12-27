@@ -1,7 +1,7 @@
 {% extends "layout.html" %} {% block content %}
 
 <h1>Welcome to Home Page</h1>
-<div class="grid-container">
+<div class="grid-container mt-5">
     {% for post in posts %}
     <article class="media content-section">
         <div class="media-body">
@@ -99,5 +99,5 @@ right_current=2) %} {% if page_num %} {% if posts.page == page_num %}
                 <li class="list-group-item list-group-item-light">etc</li>
             </ul>
         </p>    
-    <div>
+    </div>
 {% endblock index %}

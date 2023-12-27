@@ -33,7 +33,13 @@ app.register_blueprint(orders)
 app.register_blueprint(cart)
 from bookstore import admin, utils
 
+import cloudinary
 
+cloudinary.config(
+    cloud_name="ddgtjayoj",
+    api_key="451466636224894",
+    api_secret="8jP48b2XeCzhNdKNe9yGIwiDiN8"
+)
 def build_sample_db():
     """
     Populate a small db with some example entries.

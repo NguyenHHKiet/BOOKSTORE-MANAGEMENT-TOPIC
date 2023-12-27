@@ -4,8 +4,8 @@ from bookstore.users.forms import UpdateAccountForm, RegistrationForm, LoginForm
 from bookstore.cart.forms import AddToCart
 from bookstore.cart.utils import handle_cart
 from bookstore.users.utils import save_picture
-from bookstore.models import User
-from bookstore import db, user_datastore
+
+from bookstore import db, user_datastore, dao
 from flask_security.utils import hash_password, verify_password, login_user
 
 users = Blueprint('users', __name__)
@@ -68,7 +68,7 @@ def account():
     elif request.method == "GET":
         form.username.data = current_user.username
         form.email.data = current_user.email
-    image_file = url_for('static', filename=f"profile_pics/{current_user.image_file}")
+    image_file = current_user.image_file
     return render_template("account.html", title='Account',image_file=image_file, form=form)
 
 # Decorator which specifies that a user must have at least one of the specified roles.
@@ -81,7 +81,8 @@ def staff():
     
     id = form.id.data
     quantity = form.quantity.data
-    
+    configuration = dao.get_configuration()
+    payment_methods = dao.get_payment_method_all()
     print(id, quantity)
     if id is None and request.method == "POST":
         flash("Your Id book is Empty. Please input fill", "warning")
@@ -98,4 +99,4 @@ def staff():
         form.id.data = ""
         form.quantity.data = 1
     products, grand_total, grand_total_plus_shipping, quantity_total = handle_cart()
-    return render_template("staff.html", title='Staff Action',form=form, products=products, grand_total=grand_total, grand_total_plus_shipping=grand_total_plus_shipping, quantity_total=quantity_total)
+    return render_template("staff.html", title='Staff Action',form=form, products=products, grand_total=grand_total, grand_total_plus_shipping=grand_total_plus_shipping, quantity_total=quantity_total, quick_ship=configuration.quick_ship, payment_methods=payment_methods)

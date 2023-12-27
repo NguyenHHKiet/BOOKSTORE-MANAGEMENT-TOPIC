@@ -30,9 +30,13 @@ def import_book():
     # get data file from form
     excel = request.files['excel']
     # handle new data
-    utils.import_book(excel=excel)
     response = make_response()
-    response.status_code = 200
+
+    try:
+        utils.import_book(excel=excel)
+        response.status_code = 200
+    except:
+        response.status_code= 400
     return response
 
 @main.route("/search", methods=['GET', 'POST'])

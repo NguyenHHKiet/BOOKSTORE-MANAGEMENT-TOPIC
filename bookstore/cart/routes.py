@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, session
+from flask import Blueprint, render_template, redirect, url_for, session, request, make_response
 from bookstore.cart.forms import AddToCart
 from bookstore.cart.utils import handle_cart
 from bookstore import dao
@@ -59,3 +59,14 @@ def removeFromCart(index):
     del session["cart"][int(index)]
     session.modified = True
     return redirect(url_for("cart.cartDetail"))
+
+@cart.route("/api/changeQuantity", methods=["POST"])
+def change_quantity():
+    index = int(request.args.get('index'))
+    quantity = request.args.get('quantity')
+    session['cart'][index]['quantity'] = quantity
+    session.modified = True
+    response = make_response()
+    response.status_code = 200
+    return response
+
