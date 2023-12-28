@@ -154,3 +154,13 @@ class OrderDetails(db.Model):
     quantity = Column(Integer, nullable=False)
     order_id = Column(Integer, ForeignKey(Order.id), nullable=False)
     book_id = Column(Integer, ForeignKey(Book.id), nullable=False)
+
+class BankingInformation(db.Model):
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    order_id = Column(Integer, ForeignKey(Order.id), nullable=False)
+    order = relationship("Order", foreign_keys=order_id, backref="banking_infor")
+    bank_transaction_number = Column(String(255), nullable=False)
+    vnpay_transaction_number = Column(String(20), nullable=False)
+    bank_code = Column(String(20), nullable=False)
+    card_type = Column(String(20), nullable=False)
+    secure_hash = Column(String(256), nullable=False)

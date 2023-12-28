@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+{% block content %}
+
+    <div class="content-section border-0">
+        <di><h3 class="left">
+            DISCHARGE RESULT
+        </h3></di>
+        <div class="card mt-2">
+            <div class="card-header h6 ">{{ title }}</div>
+            <div class="card-body">{{ result }}</div>
+        </div>
+        <div class="card mt-2">
+            <div class="card-header h6">Order ID</div>
+            <div class="card-body">{{ order_id[0:2:1] }}</div>
+        </div>
+        <div class="card mt-2">
+            <div class="card-header  h6">Amount</div>
+            <div class="card-body">{{ "{:,.0f}".format(amount) }} VNĐ</div>
+        </div>
+        <div class="card mt-2">
+            <div class="card-header  h6">Order description</div>
+            <div class="card-body">{{ order_desc }}</div>
+        </div>
+        <div class="card mt-2">
+            <div class="card-header  h6">VNPay Transaction Number</div>
+            <div class="card-body">{{ vnp_TransactionNo }}</div>
+        </div>
+
+        {% if vnp_ResponseCode == '00' %}
+            <div class="card mt-2">
+                <div class="card-header  h6">VNPay ResponseCode</div>
+                <div class="card-body">VNPay ResponseCode: {{ vnp_ResponseCode }} - Success</div>
+            </div>
+
+        {% else %}
+            <div class="card mt-2">
+                <div class="card-header h6">VNPay ResponseCode</div>
+                <div class="card-body">{{ vnp_ResponseCode }} - Error</div>
+            </div>
+
+        {% endif %}
+        {% if msg %}
+            <div class="card mt-2">
+                <div class="card-header  h6">Message</div>
+                <div class="card-body">{{ msg }}</div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+{% block index %}
+    <div class="content-section">
+        <h3>Our Sidebar</h3>
+        <p class='text-muted'>You can put any information here you'd like.
+        <ul class="list-group">
+            <li class="list-group-item list-group-item-light">Latest Posts</li>
+            <li class="list-group-item list-group-item-light">Announcements</li>
+            <li class="list-group-item list-group-item-light">Calendars</li>
+            <li class="list-group-item list-group-item-light">etc</li>
+        </ul>
+        </p>
+    </div>
+{% endblock index %}
