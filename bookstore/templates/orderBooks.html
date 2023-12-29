@@ -1,12 +1,12 @@
 {% extends "layout.html" %} {% block body %}
 
-<h1>Welcome to Orders Page</h1>
-<div class="container mt-2">
-    <div class="d-flex justify-content-center row">
-        <div class="col-md-12">
-            <div class="table-responsive table-borderless rounded">
-                <table class="table table-striped">
-                    <thead class="table-primary">
+    <h1>Welcome to Orders Page</h1>
+    <div class="container mt-2">
+        <div class="d-flex justify-content-center row">
+            <div class="col-md-12">
+                <div class="table-responsive table-borderless rounded">
+                    <table class="table table-striped">
+                        <thead class="table-primary">
                         <tr>
                             <th scope="col">Order ID</th>
                             <th scope="col">Status</th>
@@ -15,42 +15,48 @@
                             <th scope="col">Payment Method</th>
                             <th scope="col">Total Payment</th>
                             <th scope="col">Delivery At</th>
-                            <th scope="col">View</th>
+                            <th scope="col">Action</th>
                         </tr>
-                    </thead>
-                    <tbody class="table-body">
+                        </thead>
+                        <tbody class="table-body">
                         {% for order in orders %}
-                        <tr class="">
-                            <td scope="row">{{order.id}}</td>
-                            <td>
-                                {% if order.paid_date is none and order.delivered_date is none and order.cancel_date < datetime.now() %}
-                                    <p>CANCELLED</p>
+                            <tr class="">
+                                <td scope="row">{{ order.id }}</td>
+                                <td>
+                                    {% if order.paid_date is none and order.delivered_date is none and order.cancel_date < datetime.now() %}
+                                        <p>CANCELLED</p>
                                     {% elif order.cancel_date > datetime.now() and order.paid_date is none %}
-                                    <p>UNPAID</p>
+                                        <p>UNPAID</p>
                                     {% elif order.paid_date is not none and order.delivered_date is none %}
-                                    <p>DELIVERING</p>
+                                        <p>DELIVERING</p>
                                     {% elif order.delivered_date is not none %}
-                                    <p>DELIVERED</p>
-                                {% endif %}
-                            </td>
-                            <td>
-                                {{order.initiated_date.strftime('%Y-%m-%d')}}
-                            </td>
-                            <td>{{order.cancel_date.strftime('%Y-%m-%d')}}</td>
-                            <td>{{order.payment_method.name}}</td>
-                            <td>{{"{:,.0f}".format(order.total_payment)}} VNĐ</td>
-                            <td>{{order.delivery_at}}</td>
-                            <td>
-                                <a class="btn btn-primary btn-sm" role="button">
-                                    <i class="bi bi-eye-fill"></i>
-                                </a>
-                            </td>
-                        </tr>
+                                        <p>DELIVERED</p>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ order.initiated_date.strftime('%Y-%m-%d') }}
+                                </td>
+                                <td>{{ order.cancel_date.strftime('%Y-%m-%d') }}</td>
+                                <td>{{ order.payment_method.name }}</td>
+                                <td>{{ "{:,.0f}".format(order.total_payment) }} VNĐ</td>
+                                <td>{{ order.delivery_at }}</td>
+                                <td>
+                                    {% if order.cancel_date > datetime.now() and order.paid_date is none and order.payment_method.name == "BANKING" %}
+                                        <a href="{{ url_for("orders.process_vnpay", order_id=order.id) }}" class="btn btn-primary btn-xs" role="button">
+                                            Pay
+                                        </a>
+                                    {% else %}
+                                        <a href="#" class="btn btn-secondary btn-xs disabled" role="button" >
+                                            Pay
+                                        </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
                         {% endfor %}
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
-</div>
 {% endblock %}

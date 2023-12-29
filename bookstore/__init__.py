@@ -185,7 +185,7 @@ def build_sample_db():
             if days_increment > 30 * 12:
                 days_increment = 0
             days_increment += 20
-            order = utils.create_order(customer.id, staff_id, order_details, random.randint(1, 2), initial_date)
+            order = utils.create_order(customer.id, staff_id, order_details, in_cash.id, initial_date)
             rand_num = random.randint(1, 10)
             utils.order_paid(order.total_payment, order.id,
                                               order.initiated_date + datetime.timedelta(hours=rand_num))

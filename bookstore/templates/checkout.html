@@ -43,7 +43,7 @@
                             <div class="col-lg-6">
                                 <div class="form-group">
                                     <label>Payment Option</label>
-                                    {{ form.payment_type(class='form-control') }}
+                                    {{ form.payment_type(class='form-control', id = "paymentMethod") }}
                                 </div>
                             </div>
                         </div>
@@ -80,7 +80,7 @@
                             >{{ "{:,.0f}".format(grand_total) }} VNĐ</strong
                             >
                         </p>
-                        <p>
+                        <p id="quick_ship">
                             24hr Shipping
                             <strong class="pull-right">{{ "{:,.0f}".format(quick_ship) }} VNĐ</strong>
                         </p>
@@ -88,7 +88,7 @@
                     <li class="list-group-item">
                         <p>
                             Total
-                            <strong class="pull-right"
+                            <strong class="pull-right" id="grand_total_plus_shipping"
                             >{{ "{:,.0f}".format(grand_total_plus_shipping) }} VNĐ</strong
                             >
                         </p>
@@ -112,4 +112,23 @@
             </div>
         </div>
     </div>
+    <script>
+        window.onload = () => {
+            element = document.getElementById("paymentMethod")
+            element.addEventListener("change", () => {
+                method = element.options[element.selectedIndex].innerText
+                quickShipElement = document.getElementById("quick_ship")
+                grandTotalPlusShipping = document.getElementById("grand_total_plus_shipping")
+                if (method == "BANKING") {
+                    quickShipElement.style.display = "inline"
+                    grandTotalPlusShipping.innerText =
+                    "{{ "{:,.0f}".format(grand_total_plus_shipping) + " VNĐ" }}"
+                } else {
+                    quickShipElement.style.display = "none"
+                    grandTotalPlusShipping.innerText =
+                    "{{ "{:,.0f}".format(grand_total_plus_shipping  - quick_ship) + " VNĐ"}}"
+                }
+            })
+        }
+    </script>
 {% endblock %}

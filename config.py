@@ -36,3 +36,11 @@ SECURITY_POST_REGISTER_VIEW = "/admin/"
 # Flask-Security features
 SECURITY_REGISTERABLE = True
 SECURITY_SEND_REGISTER_EMAIL = False
+
+
+#VNPAY
+
+VNPAY_TMN_CODE = "3VNWSZOD"
+VNPAY_PAYMENT_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
+VNPAY_HASH_SECRET_KEY= "EZMMDCWDQNUCFSMYYCHUIEQZGQRYCWDH"
+VNPAY_RETURN_URL = "http://localhost:5000/payment_return"

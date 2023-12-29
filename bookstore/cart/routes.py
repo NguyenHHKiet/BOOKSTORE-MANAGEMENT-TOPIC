@@ -1,13 +1,28 @@
-from flask import Blueprint, render_template, redirect, url_for, session, request, make_response
+from flask import Blueprint, render_template, redirect, url_for, session, request, make_response, flash
 from bookstore.cart.forms import AddToCart
 from bookstore.cart.utils import handle_cart
 from bookstore import dao
+
 cart = Blueprint("cart", __name__)
+
+
+@cart.route("/buyNow")
+def buy_now():
+    id = int(request.args.get("id"))
+    if "cart" not in session:
+        session["cart"] = []
+    product = [prod for prod in session["cart"] if prod["id"] == int(id)]
+    index = [index for index, prod in enumerate(session["cart"]) if prod["id"] == int(id)]
+    if len(product) == 0:
+        session["cart"].append({"id": id, "quantity": 1})
+    else:
+        session["cart"][index[0]]['quantity'] = product[0]['quantity'] + 1
+    session.modified = True
+    return redirect(url_for("cart.cartDetail"))
 
 
 @cart.route("/quick-add/<int:id>")
 def quickAdd(id):
-
     if "cart" not in session:
         session["cart"] = []
 
@@ -29,7 +44,8 @@ def cartDetail():
         session["cart"] = []
     products, grand_total, grand_total_plus_shipping, quantity_total = handle_cart()
     return render_template("cart.html", products=products, grand_total=grand_total,
-                           grand_total_plus_shipping=grand_total_plus_shipping, quantity_total=quantity_total, quick_ship=configuration.quick_ship)
+                           grand_total_plus_shipping=grand_total_plus_shipping, quantity_total=quantity_total,
+                           quick_ship=configuration.quick_ship)
 
 
 @cart.route("/add-to-cart", methods=["POST"])
@@ -60,13 +76,13 @@ def removeFromCart(index):
     session.modified = True
     return redirect(url_for("cart.cartDetail"))
 
+
 @cart.route("/api/changeQuantity", methods=["POST"])
 def change_quantity():
     index = int(request.args.get('index'))
-    quantity = request.args.get('quantity')
+    quantity = int(request.args.get('quantity'))
     session['cart'][index]['quantity'] = quantity
     session.modified = True
     response = make_response()
     response.status_code = 200
     return response
-
