@@ -1,0 +1,89 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h3 class="bold">
+        <i class="glyphicon glyphicon-shopping-cart"></i> Your Order Details
+    </h3>
+
+    <table class="table table-striped mt-4">
+        <thead>
+        <tr>
+            <th scope="col">Image</th>
+            <th scope="col">Book Name</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Total</th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for product in products %}
+            <tr class="mt-2">
+                <th>
+                    <div class="ratio ratio-1x1" style="width: 5rem; height: 5rem">
+                        <img
+                                src="{{ product['image_src'] }}"
+                                class="figure-img img-fluid rounded"
+                                alt="..."
+                        />
+                    </div>
+                </th>
+                <th>
+                    <a
+                            class="article-title bold h5"
+                            href="{{ url_for('books.bookDetail', book_id=product.id) }}"
+                    >{{ product['name'] }}</a
+                    >
+                    <p>{{ "{:,.0f}".format(product.unit_price) }} VNĐ</p>
+                </th>
+                <th>
+                    <input style="width: 5rem"
+                           type="number" id="quantity" class="form-control" name="quantity" min="1"
+                           value="{{ product.quantity }}" disabled/>
+                </th>
+
+                </div>
+                <th>
+                    <p>
+                        <strong
+                        >{{ "{:,.0f}".format(product.total) }} VNĐ</strong
+                        >
+                    </p>
+                </th>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock content %}
+{% block index %}
+    <h3 class="bold">
+        <i class="glyphicon glyphicon-th-list"></i> Order Summary
+    </h3>
+
+    <div class="panel panel-primary mt-4">
+
+        <ul class="list-group">
+            <li class="list-group-item">
+                <p class=" d-flex justify-content-between">
+                    {{ order_quantity_total }} Items
+                    <strong class="pull-right"
+                    >{{ "{:,.0f}".format(grand_total) }} VNĐ</strong
+                    >
+                </p>
+                {% if quick_ship is not none %}
+                                    <p class=" d-flex justify-content-between">
+                    24hr Shipping
+                    <strong class="pull-right">{{ "{:,.0f}".format(quick_ship) }} VNĐ</strong>
+                </p>
+                {% endif %}
+            </li>
+            <li class="list-group-item ">
+                <p class="d-flex justify-content-between">
+                    Total
+                    <strong class="pull-right"
+                    >{{ "{:,.0f}".format(grand_total_plus_shipping) }} VNĐ</strong
+                    >
+                </p>
+            </li>
+        </ul>
+    </div>
+    </div>
+{% endblock index %}

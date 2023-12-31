@@ -170,3 +170,30 @@ def order_delivered(order_id, delivered_date=datetime.now()):
     order.delivered_date = delivered_date
     dao.save_order(order)
     return 0
+
+
+def handle_order_details(order_id):
+    order = dao.get_order_by_id(order_id)
+    if not order:
+        return None
+    else:
+
+        products = []
+        grand_total = 0
+        index = 0
+        order_quantity_total = 0
+        for detail in order.order_details:
+            book = detail.book
+            quantity = detail.quantity
+            total = detail.quantity * detail.unit_price
+
+            order_quantity_total += quantity
+            grand_total += total
+
+            products.append({'id': book.id, 'name': book.name, 'unit_price': book.unit_price,
+                             'image_src': book.image_src, 'quantity': quantity, 'total': total, 'index': index})
+            index += 1
+
+        grand_total_plus_shipping = order.total_payment
+        quick_ship = grand_total_plus_shipping - grand_total if grand_total_plus_shipping - grand_total > 0 else None
+        return products, grand_total, grand_total_plus_shipping, order_quantity_total, quick_ship
