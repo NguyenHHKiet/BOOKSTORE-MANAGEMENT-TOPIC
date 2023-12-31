@@ -15,12 +15,13 @@
                             <th scope="col">Payment Method</th>
                             <th scope="col">Total Payment</th>
                             <th scope="col">Delivery At</th>
-                            <th scope="col">Action</th>
+                            <th scope="col">Details</th>
+                            <th scope="col">Pay</th>
                         </tr>
                         </thead>
                         <tbody class="table-body">
                         {% for order in orders %}
-                            <tr class="">
+                            <tr class="mt-2">
                                 <td scope="row">{{ order.id }}</td>
                                 <td>
                                     {% if order.paid_date is none and order.delivered_date is none and order.cancel_date < datetime.now() %}
@@ -41,12 +42,17 @@
                                 <td>{{ "{:,.0f}".format(order.total_payment) }} VNĐ</td>
                                 <td>{{ order.delivery_at }}</td>
                                 <td>
+                                    <a href="{{ url_for("orders.view_order_details", order_id=order.id) }}"
+                                       class="btn btn-primary btn-xs" role="button">View</a>
+                                </td>
+                                <td>
                                     {% if order.cancel_date > datetime.now() and order.paid_date is none and order.payment_method.name == "BANKING" %}
-                                        <a href="{{ url_for("orders.process_vnpay", order_id=order.id) }}" class="btn btn-primary btn-xs" role="button">
+                                        <a href="{{ url_for("orders.process_vnpay", order_id=order.id) }}"
+                                           class="btn btn-primary btn-xs" role="button">
                                             Pay
                                         </a>
                                     {% else %}
-                                        <a href="#" class="btn btn-secondary btn-xs disabled" role="button" >
+                                        <a href="#" class="btn btn-secondary btn-xs disabled" role="button">
                                             Pay
                                         </a>
                                     {% endif %}

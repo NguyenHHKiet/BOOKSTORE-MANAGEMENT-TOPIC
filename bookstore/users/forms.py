@@ -1,7 +1,7 @@
-from flask import flash
+
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, RadioField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from flask_security import current_user
 from flask_security.utils import verify_password
@@ -44,8 +44,12 @@ class LoginForm(FlaskForm):
     def get_user(self):
         return User.query.filter_by(email=self.email.data).first()
 class UpdateAccountForm(FlaskForm):
+    firstname = StringField("Firstname", validators=[DataRequired()])
+    lastname = StringField("Lastname", validators=[DataRequired()])
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
     email = StringField('Email', validators=[DataRequired(), Email()])
+    phone = StringField('Phone', validators=[DataRequired(), Length(min=10, max=10)])
+    gender = RadioField("Gender", choices=[(1, 'Male'), (0, "Female")])
     picture = FileField('Update Profile Picture', validators=[FileAllowed(['jpg', 'png'])])
     submit = SubmitField('Update')
     
@@ -60,5 +64,25 @@ class UpdateAccountForm(FlaskForm):
             user = User.query.filter_by(email=email.data).first()
             if user:
                 raise ValidationError('That email is taken. Please choose a different one.')
-    
+
+    def validate_phone(self, phone):
+        if not phone.data:
+            raise ValidationError("Phone can't be empty")
+        if not phone.data.isdigit():
+            raise ValidationError("Phone must be digit only")
+        if len(phone.data) != 0:
+            raise ValidationError("Length is invalid")
+        if phone.data[0] != "0":
+            raise ValidationError("Phone must start with 0")
+
+class VerifyAccountForm(FlaskForm):
+    first_char = StringField("First", validators=[DataRequired()], render_kw={"maxlength": 1})
+    second_char = StringField("Second", validators=[DataRequired()], render_kw={"maxlength": 1})
+    third_char = StringField("Third", validators=[DataRequired()], render_kw={"maxlength": 1})
+    fourth_char = StringField("Fourth", validators=[DataRequired()], render_kw={"maxlength": 1})
+    fifth_char = StringField("Fifth", validators=[DataRequired()], render_kw={"maxlength": 1})
+    submit = SubmitField("Verify")
+
+    def to_code(self):
+        return self.fifth_char.data + self.second_char.data + self.third_char.data + self.fourth_char.data + self.fifth_char.data
     

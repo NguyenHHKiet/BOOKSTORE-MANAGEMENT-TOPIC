@@ -4,7 +4,7 @@ from flask import Blueprint, request, render_template, redirect, url_for, flash,
 from flask_security import logout_user, current_user, roles_accepted, login_required
 
 import config
-from bookstore.models import Order, Book, OrderDetails, User
+
 from bookstore.orders.forms import Checkout
 from bookstore.cart.utils import handle_cart
 from bookstore import dao, utils
@@ -21,6 +21,15 @@ def orderBooks():
         return redirect(url_for("users.login", next=request.url))
     orders = dao.get_orders_by_customer_id(current_user.id)
     return render_template('orderBooks.html', title='Order Books', orders=orders, datetime=datetime.datetime)
+
+
+@orders.route("/order_details", methods=['GET'])
+def view_order_details():
+    order_id = int(request.args.get("order_id"))
+    products, grand_total, grand_total_plus_shipping, order_quantity_total, quick_ship = utils.handle_order_details(order_id)
+    return render_template("/order_details.html", products=products, grand_total=grand_total,
+                           grand_total_plus_shipping=grand_total_plus_shipping, order_quantity_total=order_quantity_total,
+                           quick_ship=quick_ship)
 
 
 @orders.route('/checkout', methods=['GET', 'POST'])
@@ -62,6 +71,7 @@ def checkout():
 
 
 @orders.route("/vnpay", methods=["GET", "POST"])
+@login_required
 def process_vnpay():
     form = PaymentForm()
     if request.method == 'POST':
@@ -109,11 +119,12 @@ def process_vnpay():
         form.order_id.data = order.id
         form.amount.data = order.total_payment
         form.order_desc.data = "%s pay for bookstore online shopping" % (
-                    current_user.first_name + current_user.last_name)
+                current_user.first_name + current_user.last_name)
         return render_template("vnpay/payment.html", title="DISCHARGE", form=form)
 
 
 @orders.route("/payment_return", methods=["GET"])
+@login_required
 def payment_return():
     if request.args:
         vnp = Vnpay()

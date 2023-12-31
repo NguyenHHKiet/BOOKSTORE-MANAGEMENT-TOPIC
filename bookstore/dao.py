@@ -1,7 +1,9 @@
+from datetime import datetime, timedelta
+
 from sqlalchemy import text, func, desc
 from bookstore import db
 from bookstore.models import Configuration, ImportTicket, Book, Category, Author, PaymentMethod, User, Order, \
-    OrderDetails, BankingInformation
+    OrderDetails, BankingInformation, RegisterCode
 
 
 def get_configuration():
@@ -151,3 +153,19 @@ def statistic_revenue():
         .group_by(func.extract("month", Order.paid_date)) \
         .order_by(desc("revenue")) \
         .all()
+
+def count_user():
+    return User.query.count()
+
+def save_register_code(code, user_id):
+    register_code = RegisterCode(code=code, user_id=user_id)
+    db.session.add(register_code)
+    db.session.commit()
+    return register_code
+
+def get_register_code(code):
+    return RegisterCode.query.filter(RegisterCode.code.__eq__(code)).first()
+
+def update_register_code(register_code):
+    db.session.add(register_code)
+    db.session.commit()
