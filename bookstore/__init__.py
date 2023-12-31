@@ -1,15 +1,20 @@
 import json
-from flask import Flask
+from flask import Flask, render_template, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_security import Security, SQLAlchemyUserDatastore
 from flask_security.utils import hash_password
 import datetime
 
-
-
 # Create Flask application
 app = Flask(__name__)
 app.config.from_pyfile('../config.py')
+
+app.config['PAGE_SIZE'] = 6
+@app.errorhandler(Exception)
+def global_exception_handler(e):
+    print(e)
+    return render_template("error_page.html")
+
 
 # Create database connection object
 db = SQLAlchemy(app)
@@ -40,6 +45,12 @@ cloudinary.config(
     api_key="451466636224894",
     api_secret="8jP48b2XeCzhNdKNe9yGIwiDiN8"
 )
+
+from flask_mailman import Mail
+
+mail = Mail(app)
+
+
 def build_sample_db():
     """
     Populate a small db with some example entries.
@@ -61,20 +72,21 @@ def build_sample_db():
         appconfig = Configuration(min_import_quantity=150,
                                   min_stock_quantity=300,
                                   time_to_end_order=48,
-                                  time_to_end_register=24,
+
                                   quick_ship=50000
                                   )
         db.session.add(appconfig)
 
         test_superuser = user_datastore.create_user(
             first_name='Admin',
-            last_name= '2023',
+            last_name='2023',
             email='admin@example.com',
             password=hash_password('admin'),
             roles=[staff_role, super_user_role],
             address='VN',
-            confirmed_at= datetime.datetime.now(),
-            phone_number ="0795648319"
+            confirmed_at=datetime.datetime.now(),
+            phone_number="0795648319",
+            active=True
         )
         test_staff = user_datastore.create_user(
             first_name='Staff',
@@ -84,7 +96,8 @@ def build_sample_db():
             roles=[staff_role],
             address='VN',
             confirmed_at=datetime.datetime.now(),
-            phone_number="0798546948"
+            phone_number="0798546948",
+            active=True
         )
         test_user = user_datastore.create_user(
             first_name='user',
@@ -94,7 +107,8 @@ def build_sample_db():
             roles=[user_role],
             address='VN',
             confirmed_at=datetime.datetime.now(),
-            phone_number="0986498464"
+            phone_number="0986498464",
+            active=True
         )
 
         first_names = [
@@ -112,8 +126,8 @@ def build_sample_db():
             tmp_email = first_names[i].lower() + "." + last_names[i].lower() + "@example.com"
             tmp_pass = ''.join(random.choice(string.ascii_lowercase + string.digits) for i in range(10))
             phone = "0"
-            for k in range(0,9):
-                phone += str(random.randint(6,9))
+            for k in range(0, 9):
+                phone += str(random.randint(6, 9))
 
             user_datastore.create_user(
                 first_name=first_names[i],
@@ -123,7 +137,8 @@ def build_sample_db():
                 roles=[user_role, ],
                 address='VN',
                 confirmed_at=datetime.datetime.now(),
-                phone_number = phone
+                phone_number=phone,
+                active=True
             )
 
         # Book
@@ -149,7 +164,7 @@ def build_sample_db():
                                 author=db_author,
                                 description=description,
                                 image_src=image,
-                                unit_price=random.randint(5,15) * 1000,
+                                unit_price=random.randint(5, 15) * 1000,
                                 available_quantity=random.randint(150, 200),
                                 enable=True)
                 db.session.add(new_book)
@@ -188,9 +203,9 @@ def build_sample_db():
             order = utils.create_order(customer.id, staff_id, order_details, in_cash.id, initial_date)
             rand_num = random.randint(1, 10)
             utils.order_paid(order.total_payment, order.id,
-                                              order.initiated_date + datetime.timedelta(hours=rand_num))
+                             order.initiated_date + datetime.timedelta(hours=rand_num))
             utils.order_delivered(order.id, order.initiated_date + datetime.timedelta(hours=rand_num + 1))
     return
 
-# ImportError: cannot import name 'url_decode' from 'werkzeug.urls' 
+# ImportError: cannot import name 'url_decode' from 'werkzeug.urls'
 # error present werkzeug version 3.0, but flask_login not compatible yet version 3.0 (should werkzeug 2.3)

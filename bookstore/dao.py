@@ -1,11 +1,31 @@
+from datetime import datetime, timedelta
+
 from sqlalchemy import text, func, desc
-from bookstore import db
+from bookstore import db, app
 from bookstore.models import Configuration, ImportTicket, Book, Category, Author, PaymentMethod, User, Order, \
-    OrderDetails, BankingInformation
+    OrderDetails, BankingInformation, RegisterCode
 
 
 def get_configuration():
     return Configuration.query.first()
+
+
+def load_cate():
+    return Category.query.all()
+
+def load_book(cate_id=None, page=None):
+    books=Book.query.filter(Book.enable.__eq__(True))
+    if cate_id:
+        books = books.filter(Book.category_id.__eq__(cate_id))
+
+    if page:
+        page = int(page)
+        page_size = app.config['PAGE_SIZE']
+        start = (page - 1)*page_size
+
+        return books.slice(start, start + page_size)
+
+    return books.all()
 
 
 def save_ticket(url):
@@ -151,3 +171,19 @@ def statistic_revenue():
         .group_by(func.extract("month", Order.paid_date)) \
         .order_by(desc("revenue")) \
         .all()
+
+def count_user():
+    return User.query.count()
+
+def save_register_code(code, user_id):
+    register_code = RegisterCode(code=code, user_id=user_id)
+    db.session.add(register_code)
+    db.session.commit()
+    return register_code
+
+def get_register_code(code):
+    return RegisterCode.query.filter(RegisterCode.code.__eq__(code)).first()
+
+def update_register_code(register_code):
+    db.session.add(register_code)
+    db.session.commit()

@@ -1,0 +1,55 @@
+{% extends "layout.html" %} {% block body %}
+    <form class="container-fluid bg-body-tertiary d-block" method="POST" action="{{ url_for("users.verify", user_id=user_id) }}">
+        {{ form.csrf_token() }}
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-6 col-lg-4" style="min-width: 500px;">
+                <div class="card bg-white mb-5 mt-5 border-0" style="box-shadow: 0 12px 15px rgba(0, 0, 0, 0.02);">
+                    <div class="card-body p-5 text-center">
+                        <h4>Verify</h4>
+                        <p>Your code was sent to your email</p>
+                        <div class="otp-field mb-4">
+                            {{ form.first_char() }}
+                            {{ form.second_char() }}
+                            {{ form.third_char() }}
+                            {{ form.fourth_char() }}
+                            {{ form.fifth_char() }}
+                        </div>
+                        {{ form.submit(class="btn btn-primary mb-3") }}
+                        <p class="resend text-muted mb-0">
+                            Didn't receive code? <a href="{{ url_for("users.resend_verify_code", user_id=user_id) }}">Request again</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <style>
+        .otp-field {
+            flex-direction: row;
+            column-gap: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .otp-field input {
+            height: 45px;
+            width: 42px;
+            border-radius: 6px;
+            outline: none;
+            font-size: 1.125rem;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        .otp-field input:focus {
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .otp-field input::-webkit-inner-spin-button,
+        .otp-field input::-webkit-outer-spin-button {
+            display: none;
+        }
+
+    </style>
+{% endblock %}

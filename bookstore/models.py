@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, Boolean, String, ForeignKey, DateTime, func
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from sqlalchemy.dialects.mysql import LONGTEXT
 from bookstore import db
 from flask_security import RoleMixin, UserMixin
@@ -31,7 +31,9 @@ class User(db.Model, UserMixin):
     address = Column(String(255))
     last_name = db.Column(db.String(255))
     password = db.Column(db.String(255), nullable=False)
-    active = db.Column(db.Boolean())
+    active = db.Column(db.Boolean(), default=False)
+    create_at = Column(DateTime, default=func.now())
+    gender = Column(Boolean, default=True)
     confirmed_at = db.Column(db.DateTime())
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('users', lazy='dynamic'))
@@ -46,18 +48,16 @@ class Configuration(db.Model):
     min_import_quantity = Column(Integer, nullable=False)
     min_stock_quantity = Column(Integer, nullable=False)
     time_to_end_order = Column(Integer, nullable=False)
-    time_to_end_register = Column(Integer, nullable=False)
     quick_ship = Column(Integer, nullable=False)
 
 
 
 class RegisterCode(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
-    code = Column(String(10), nullable=False, unique=True)
+    code = Column(String(5), nullable=False, unique=True)
     enable = Column(Boolean, nullable=False, default=True)
-    expired_at = Column(DateTime, nullable=False)
     user_id = Column(Integer, ForeignKey(User.id), nullable=False)
-    user = relationship("User", uselist=False)
+    user = relationship("User", backref=backref("register_code", uselist=False))
 
 class Category(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
