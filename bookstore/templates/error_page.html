@@ -23,9 +23,9 @@
 	<div id="notfound">
 		<div class="notfound">
 			<div class="notfound-404" style="background-image: url(https://res.cloudinary.com/ddgtjayoj/image/upload/v1703920247/gmh3aeokk7is5bfcfnpb.png)"></div>
-			<h1>404</h1>
-			<h2>Oops! Page Not Be Found</h2>
-			<p>Sorry but the page you are looking for does not exist, have been removed. name changed or is temporarily unavailable</p>
+			<h1>{{ e.code }}</h1>
+			<h2>{{ e.__str__() }}</h2>
+			<p>Sorry but we can't service your request</p>
 			<a href="/">Back to homepage</a>
 		</div>
 	</div>

@@ -65,6 +65,11 @@ def save_user(user):
     db.session.add(user)
     db.session.commit()
 
+def get_user_by_phone(phone):
+    return User.query.filter(User.phone_number.__eq__(phone)).first()
+
+def get_user_by_username(username):
+    return User.query.filter(User.username.__eq__(username)).first()
 
 def get_book_by_id(id):
     return Book.query.get(id)
@@ -169,3 +174,6 @@ def get_register_code(code):
 def update_register_code(register_code):
     db.session.add(register_code)
     db.session.commit()
+
+def search_user_by_phone(kw, max):
+    return User.query.filter(User.phone_number.contains(kw)).paginate(page=1, per_page=max)

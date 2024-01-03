@@ -1,9 +1,9 @@
-from flask import render_template, request, Blueprint, url_for, redirect, flash, session
+from flask import render_template, request, Blueprint, url_for, redirect, flash, session, jsonify
 from flask_security import logout_user, current_user, roles_accepted, login_required
 from bookstore.users.forms import UpdateAccountForm, RegistrationForm, LoginForm, VerifyAccountForm
 from bookstore.cart.forms import AddToCart
 from bookstore.cart.utils import handle_cart
-from bookstore.users.utils import save_picture, send_verify_code, verify_account, resend_register_code
+from bookstore.users.utils import save_picture, send_verify_code, verify_account, resend_register_code, extract_search_user_by_phone
 
 from bookstore import db, user_datastore, dao
 from flask_security.utils import hash_password, verify_password, login_user
@@ -125,6 +125,7 @@ def account():
 
 # Decorator which specifies that a user must have at least one of the specified roles.
 @users.route('/staff', methods=["GET", "POST"])
+@login_required
 @roles_accepted('staff', 'admin')
 def staff():
     if "cart" not in session:
@@ -133,8 +134,6 @@ def staff():
     
     id = form.id.data
     quantity = form.quantity.data
-    configuration = dao.get_configuration()
-    payment_methods = dao.get_payment_method_all()
     print(id, quantity)
     if id is None and request.method == "POST":
         flash("Your Id book is Empty. Please input fill", "warning")
@@ -151,4 +150,14 @@ def staff():
         form.id.data = ""
         form.quantity.data = 1
     products, grand_total, grand_total_plus_shipping, quantity_total = handle_cart()
-    return render_template("staff.html", title='Staff Action',form=form, products=products, grand_total=grand_total, grand_total_plus_shipping=grand_total_plus_shipping, quantity_total=quantity_total, quick_ship=configuration.quick_ship, payment_methods=payment_methods)
+    return render_template("staff.html", title='Staff Action',form=form, products=products, grand_total=grand_total, quantity_total=quantity_total)
+@users.route("/api/user/search_by_phone", methods=["GET"])
+@login_required
+def process_search_user_by_phone():
+    try:
+        keyword = request.args.get("kw")
+        max = int(request.args.get("max"))
+        return jsonify(extract_search_user_by_phone(keyword, max))
+    except:
+        return jsonify([])
+

@@ -4,7 +4,7 @@ from flask_admin.contrib.sqla import ModelView
 from flask_security import current_user
 from flask_admin import expose, BaseView, AdminIndexView
 import calendar
-from bookstore import utils
+from bookstore import utils, db
 
 
 # Create customized model view class
@@ -122,16 +122,18 @@ class ConfigurationView(ModelView):
         if form.validate():
             try:
                 if int(form.min_import_quantity.data) > 0 and int(form.min_stock_quantity.data) > 0 and int(
-                        form.time_to_end_order.data) > 0 and int(form.quick_ship.data) > 0:
+                        form.time_to_end_order.data) > 0 and int(form.quick_ship.data) >= 0:
 
                     model.min_import_quantity = form.min_import_quantity.data
-                    model.form.min_stock_quantity = form.min_stock_quantity.data
+                    model.min_stock_quantity = form.min_stock_quantity.data
                     model.time_to_end_order = form.time_to_end_order.data
                     model.quick_ship = form.quick_ship.data
-
-                    self.model.save()
+                    db.session.commit()
+                    return True
                 else:
                     flash("Value can't be negative", "error")
-                    return
-            except:
-                flash("Input error","error")
+                    return False
+            except Exception as e:
+                print(e)
+                flash("Input error", "error")
+                return False

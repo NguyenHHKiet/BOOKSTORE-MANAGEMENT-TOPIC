@@ -22,7 +22,7 @@
                             />
                         </li>
                         <li class="breadcrumb-item">
-                            <a class="">{{ post.author.name }}</a>
+                            <a class="text-decoration-none">{{ post.author.name }}</a>
                         </li>
                         <li class="breadcrumb-item active" aria-current="page">
                             <small class="text-muted"
@@ -34,7 +34,7 @@
             </div>
             <h2>
                 <a
-                    class="article-title"
+                    class="article-title text-decoration-none"
                     href="{{url_for('books.bookDetail', book_id=post.id)}}"
                     >{{ post.name }}</a
                 >
