@@ -28,7 +28,7 @@
                 </th>
                 <th>
                     <a
-                            class="article-title bold h5"
+                            class="article-title bold h5 text-decoration-none"
                             href="{{ url_for('books.bookDetail', book_id=product.id) }}"
                     >{{ product['name'] }}</a
                     >
@@ -40,7 +40,7 @@
                            value="{{ product.quantity }}" disabled/>
                 </th>
 
-                </div>
+
                 <th>
                     <p>
                         <strong
@@ -85,5 +85,5 @@
             </li>
         </ul>
     </div>
-    </div>
+
 {% endblock index %}

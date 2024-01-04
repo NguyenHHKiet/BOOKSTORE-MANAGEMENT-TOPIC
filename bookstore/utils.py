@@ -136,10 +136,12 @@ def create_order(customer_id, staff_id, books, payment_method_id, initial_date=d
     return order
 
 
-def order_paid(received_money, order_id, paid_date=datetime.now()):
+def order_paid_incash(received_money, order_id, paid_date=datetime.now()):
     order = dao.get_order_by_id(order_id)
     if order is None or order.paid_date:
         return -1
+    if received_money < order.total_payment:
+        return -2
     order.received_money = received_money
     order.paid_date = paid_date
     dao.save_order(order)
@@ -149,7 +151,6 @@ def order_paid(received_money, order_id, paid_date=datetime.now()):
 def order_paid_by_vnpay(order_id, bank_transaction_number, vnpay_transaction_number, bank_code, card_type,
                         secure_hash, received_money, paid_date):
     order = dao.get_order_by_id(order_id)
-    print(order)
     if not order or order.paid_date:
         return -1
     else:
@@ -195,5 +196,8 @@ def handle_order_details(order_id):
             index += 1
 
         grand_total_plus_shipping = order.total_payment
-        quick_ship = grand_total_plus_shipping - grand_total if grand_total_plus_shipping - grand_total > 0 else None
-        return products, grand_total, grand_total_plus_shipping, order_quantity_total, quick_ship
+        quick_ship = grand_total_plus_shipping - grand_total if grand_total_plus_shipping - grand_total >= 0 else None
+        isPaid = True if (order.paid_date is not None) and (order.received_money is not None) else False
+        isDelivered = True if order.delivered_date is not None else False
+        isCanceled = True if (order.paid_date is None) and (order.cancel_date < datetime.now()) else False
+        return products, grand_total, grand_total_plus_shipping, order_quantity_total, quick_ship, isPaid, isDelivered, isCanceled

@@ -74,6 +74,9 @@ def addToCart():
 def removeFromCart(index):
     del session["cart"][int(index)]
     session.modified = True
+    next = request.args.get("next")
+    if next:
+        return redirect(next)
     return redirect(url_for("cart.cartDetail"))
 
 

@@ -1,4 +1,6 @@
 import json
+import traceback
+
 from flask import Flask, render_template, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_security import Security, SQLAlchemyUserDatastore
@@ -9,11 +11,11 @@ import datetime
 app = Flask(__name__)
 app.config.from_pyfile('../config.py')
 
-
 @app.errorhandler(Exception)
 def global_exception_handler(e):
     print(e)
-    return render_template("error_page.html")
+    print(traceback.print_exc())
+    return render_template("error_page.html", e=e)
 
 
 # Create database connection object
@@ -73,7 +75,7 @@ def build_sample_db():
                                   min_stock_quantity=300,
                                   time_to_end_order=48,
 
-                                  quick_ship=50000
+                                  quick_ship=0
                                   )
         db.session.add(appconfig)
 
@@ -202,8 +204,8 @@ def build_sample_db():
             days_increment += 20
             order = utils.create_order(customer.id, staff_id, order_details, in_cash.id, initial_date)
             rand_num = random.randint(1, 10)
-            utils.order_paid(order.total_payment, order.id,
-                             order.initiated_date + datetime.timedelta(hours=rand_num))
+            utils.order_paid_incash(order.total_payment, order.id,
+                                    order.initiated_date + datetime.timedelta(hours=rand_num))
             utils.order_delivered(order.id, order.initiated_date + datetime.timedelta(hours=rand_num + 1))
     return
 

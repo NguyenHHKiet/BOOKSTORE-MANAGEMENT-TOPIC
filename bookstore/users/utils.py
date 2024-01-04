@@ -61,3 +61,15 @@ def resend_register_code(user_id):
     message = EmailMessage(subject, content, from_email, [to_email])
     message.send()
     return 0
+
+
+def extract_search_user_by_phone(kw, max=5):
+    list_user = dao.search_user_by_phone(kw, max)
+    print(list_user)
+    result = []
+    for user in list_user:
+        result.append({
+            "name": user.first_name + " " +  user.last_name,
+            "phone": user.phone_number
+        })
+    return result
