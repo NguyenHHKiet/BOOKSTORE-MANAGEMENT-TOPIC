@@ -1,3 +1,5 @@
+import datetime
+
 from sqlalchemy import Column, Integer, Boolean, String, ForeignKey, DateTime, func
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.dialects.mysql import LONGTEXT
@@ -21,6 +23,7 @@ class Role(db.Model, RoleMixin):
         return self.name
 
 
+
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), unique=True)
@@ -38,7 +41,7 @@ class User(db.Model, UserMixin):
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('users', lazy='dynamic'))
     fs_uniquifier = db.Column(db.String(64), unique=True, nullable=False)
-
+    
     def __str__(self):
         return self.email
 
@@ -87,6 +90,7 @@ class Book(db.Model):
     order_details = relationship("OrderDetails", backref= 'book', lazy= True)
     enable = Column(Boolean, nullable=False, default=False)
     description = db.Column(LONGTEXT)
+
     
     def in_stock(self):
         if db.session:
@@ -164,3 +168,5 @@ class BankingInformation(db.Model):
     bank_code = Column(String(20), nullable=False)
     card_type = Column(String(20), nullable=False)
     secure_hash = Column(String(256), nullable=False)
+
+

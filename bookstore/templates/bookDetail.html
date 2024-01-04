@@ -35,9 +35,9 @@
             <div class="">
                 <img
                     src="{{ post.image_src}}"
-                    class="figure-img img-fluid img-thumbnail w-100 object-fit-cover border rounded shadow"
+                    class="figure-img img-fluid img-thumbnail object-fit-cover border rounded shadow"
                     style="
-                        height: 30rem;
+                        width: 250px;
                     "
                     alt="..."
                 />
@@ -66,6 +66,33 @@
         </figure>
     </div>
 </article>
+
+
+{% if  current_user.is_authenticated %}
+ <div>
+    <div>
+        <textarea class="form-control" placeholder="Nhập nội dung bình luận"></textarea>
+    </div>
+    <input type="button" class="btn btn-danger" style="margin-top: 7px" value="Bình luận"/>
+
+ </div>
+    {% else %}
+    <a href="{{ url_for('users.login') }}">Đăng nhập để bình luận</a>
+    {% endif %}
+
+<br></br>
+    <div class="row comment">
+        <div class="col-md-1 col-xs-4">
+            <img class="rounded-circle img-fluid" alt="demo"
+                    src="https://hanoispiritofplace.com/wp-content/uploads/2017/05/tai-anh-tinh-yeu-dep-5.jpg"/>
+        </div>
+
+        <div class="col-md-11 col-xs-8">
+            <p>San pham tuyet voi</p>
+            <p><em>2024-1-5</em></p>
+        </div>
+    </div>
+
 {% endblock content %}
 
 {% block index %} 

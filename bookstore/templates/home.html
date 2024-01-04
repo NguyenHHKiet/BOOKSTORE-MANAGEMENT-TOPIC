@@ -32,9 +32,10 @@
                     </ol>
                 </nav>
             </div>
-            <h2>
+            <h2 class="scrollable-title">
+
                 <a
-                    class="article-title text-decoration-none"
+                    class="article-title "
                     href="{{url_for('books.bookDetail', book_id=post.id)}}"
                     >{{ post.name }}</a
                 >
@@ -47,9 +48,7 @@
                         alt="..."
                     />
                 </div>
-                <figcaption class="figure-caption article-content">
-                    {{ post.description }}
-                </figcaption>
+                <div class="scrollable">{{ post.description }}</div>
             </figure>
         </div>
         <div class="float-end" style="">
@@ -73,31 +72,43 @@
     </article>
     {% endfor %}
 </div>
-{% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1,
-right_current=2) %} {% if page_num %} {% if posts.page == page_num %}
-<a
-    class="btn btn-info mb-4 text-white"
-    href="{{url_for('main.home', page=page_num)}}"
-    >{{page_num}}</a
->
-{% else %}
-<a
-    class="btn btn-outline-info mb-4"
-    href="{{url_for('main.home', page=page_num)}}"
-    >{{page_num}}</a
->
-{% endif %} {% else %} ... {% endif %} {% endfor %} {% endblock content %}
 
-{% block index %} 
-    <div class="content-section">
-        <h3>Our Sidebar</h3>
-        <p class='text-muted'>You can put any information here you'd like.
-            <ul class="list-group">
-                <li class="list-group-item list-group-item-light">Latest Posts</li>
-                <li class="list-group-item list-group-item-light">Announcements</li>
-                <li class="list-group-item list-group-item-light">Calendars</li>
-                <li class="list-group-item list-group-item-light">etc</li>
+{% if cate_id == None%}
+    {% if pages>1 %}
+<ul class="pagination mt-1">
+        {% for i in range(pages) %}
+        <li class="page-item"><a class="page-link" href="/?page={{ i + 1 }}">{{ i + 1 }}</a></li>
+        {% endfor %}
+</ul>
+    {% endif %}
+{% endif %}
+
+
+    {% if cate_id   %}
+        {% if  numCate>1%}
+            <ul class="pagination mt-1">
+                {% for i in range(numCate) %}
+                    <li class="page-item">
+                        <a class="page-link" href="/?cate_id={{ cate_id }}&page={{ i + 1 }}">{{ i + 1 }}</a>
+                    </li>
+                {% endfor %}
             </ul>
-        </p>    
-    </div>
-{% endblock index %}
+        {% endif %}{% endif %}
+
+
+
+    {% if kw   %}
+
+        {% if num>1 %}
+            <ul class="pagination mt-1">
+                {% for i in range(num) %}
+                    <li class="page-item">
+                        <a class="page-link" href="?search={{ kw }}&page={{ i + 1 }}">{{ i + 1 }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+
+    {% endif %}{% endif %}
+
+{% endblock content %}
+

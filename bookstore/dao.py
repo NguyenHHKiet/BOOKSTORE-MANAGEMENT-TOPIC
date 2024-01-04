@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 from sqlalchemy import text, func, desc
-from bookstore import db
+from bookstore import db, app
 from bookstore.models import Configuration, ImportTicket, Book, Category, Author, PaymentMethod, User, Order, \
     OrderDetails, BankingInformation, RegisterCode
 
@@ -15,6 +15,28 @@ def save_ticket(url):
     db.session.add(ticket)
     db.session.commit()
     return ticket
+
+def load_cate():
+    return Category.query.all()
+
+def load_book(cate_id=None, page=None, kw=None):
+    books=Book.query.filter(Book.enable.__eq__(True))
+
+    if kw:
+        books=books.filter(Book.name.contains(kw))
+
+    if cate_id:
+        books = books.filter(Book.category_id.__eq__(cate_id))
+
+    if page:
+        page = int(page)
+        page_size = app.config['PAGE_SIZE']
+        start = (page - 1)*page_size
+
+        return books.slice(start, start + page_size)
+
+    return books.all()
+
 
 
 def get_book_by_name(name):

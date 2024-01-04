@@ -10,7 +10,7 @@ import datetime
 # Create Flask application
 app = Flask(__name__)
 app.config.from_pyfile('../config.py')
-
+app.config['PAGE_SIZE'] = 6
 @app.errorhandler(Exception)
 def global_exception_handler(e):
     print(e)
