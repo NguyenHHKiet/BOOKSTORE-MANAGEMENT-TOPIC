@@ -64,7 +64,7 @@ def searchItems():
     num = Book.query.filter(Book.name.contains(data)).count()
 
     res = dao.load_book(kw=data, page=page)
-    print(data)
+    
     if not data or not res:
         flash('Book not found!!', 'warning')
         return redirect(url_for('main.home'))
