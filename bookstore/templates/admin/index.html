@@ -1,22 +1,13 @@
 {% extends 'admin/master.html' %} {% block body %} {{ super() }}
 <div class="container">
     <div class="row">
-        <div class="col-sm-10 col-sm-offset-1">
-            <h1>Flask-Admin example</h1>
-            <p class="lead">Authentication</p>
+        <div class="col-sm-12 col-sm-offset-1">
             <div style="color: red">{{arg1}}</div>
             {% if not current_user.is_authenticated %}
             <div style="color: red">{{err_msg | safe}}</div>
             {% endif %}
-            <p>
-                This example shows how you can use
-                <a
-                    href="https://pythonhosted.org/Flask-Security/index.html"
-                    target="_blank"
-                    >Flask-Security</a
-                >
-                for authentication.
-            </p>
+            {% if  current_user.is_authenticated %}
+            {% endif %}
             {% if not current_user.is_authenticated %}
             <p>
                 You can register as a regular user, or log in as a superuser
@@ -41,10 +32,16 @@
             {% endif %}
             <p>
                 <a class="btn btn-primary" href="/"
-                    ><i class="glyphicon glyphicon-chevron-left"></i> Back</a
-                >
+                    ><i class="glyphicon glyphicon-chevron-left"></i> Back</a>
             </p>
+
+<div style="text-align: center">
+        <img style="height:700px "
+                 src="https://thammylinhanh.vn/wp-content/uploads/2023/12/hinh-chuc-nam-moi-2024.jpg">
+</div>
+
         </div>
+
     </div>
 </div>
 

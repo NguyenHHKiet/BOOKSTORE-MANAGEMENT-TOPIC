@@ -3,7 +3,7 @@
 <article class="media content-section">
     <div class="media-body">
         <div class="article-metadata d-flex justify-content-between align-items-center">
-            <h2><a class="article-title"
+            <h2><a class="article-title text-decoration-none"
                 >{{ post.name }}</a>
             </h2>
             <nav aria-label="breadcrumb">
@@ -16,11 +16,11 @@
                                 height: 30px;
                                 margin: 0px 10px 0px 0;
                             "
-                            src="{{url_for('static', filename='profile_pics/' + post.image_src)}}"
+                            src="{{ post.image_src}}"
                         />
                     </li>
                     <li class="breadcrumb-item">
-                        <a class="me-2">{{ post.author.name }}</a>
+                        <a class="me-2 text-decoration-none">{{ post.author.name }}</a>
                     </li>
                     <li class="breadcrumb-item active" aria-current="page">
                         <small class="text-muted"
@@ -34,10 +34,10 @@
         <figure class="figure w-100 mt-2">
             <div class="">
                 <img
-                    src="{{url_for('static', filename='profile_pics/' + post.image_src)}}"
-                    class="figure-img img-fluid img-thumbnail w-100 object-fit-cover border rounded shadow"
+                    src="{{ post.image_src}}"
+                    class="figure-img img-fluid img-thumbnail object-fit-cover border rounded shadow"
                     style="
-                        height: 30rem;
+                        width: 250px;
                     "
                     alt="..."
                 />
@@ -66,6 +66,43 @@
         </figure>
     </div>
 </article>
+
+
+{% if  current_user.is_authenticated %}
+    <div>
+        <textarea id="commentId" class="form-control" placeholder="Nhập nội dung bình luận"></textarea>
+        <input onclick="addComment({{ post.id }})" type="button" class="btn btn-danger" style="margin-top: 7px" value="Bình luận"/>
+    </div>
+{% else %}
+    <a href="{{ url_for('users.login', next='books.bookDetail', book_id=post.id) }}">Đăng nhập để bình luận</a>
+{% endif %}
+
+<br></br>
+
+    {% if pages>1 %}
+            <ul class="pagination mt-1">
+                    {% for i in range(1, 1+pages) %}
+                    <li class="page-item"><a class="page-link" href="javascript:;" onclick="loadComments({{ post.id }}, {{ i }})">{{ i }}</a></li>
+                    {% endfor %}
+            </ul>
+    {% endif %}
+
+    <div id="commentArea">
+
+
+    </div>
+
+
+    <script>
+        window.onload=function (){
+            loadComments({{ post.id }})
+            {#let date=document.getElementsByClassName('myDate')#}
+            {#for (let i=0; i<date.length;i++)#}
+            {#    date[i].innerText = moment(date[i].innerText).locale('vi').fromNow()#}
+            {##}
+        }
+    </script>
+
 {% endblock content %}
 
 {% block index %} 
@@ -73,8 +110,8 @@
         <h3>Our Detail</h3>
         <p class='text-muted'>You can put any information here you'd like.
             <ul class="list-group">
-                <li class="list-group-item list-group-item-light d-flex justify-content-between"><span>Price</span><span class="fw-bold">$ {{post.unit_price / 100}}</span></li>
-                <li class="list-group-item list-group-item-light d-flex justify-content-between"><span>Status</span><span class="fw-bold">{{post.enable}}</span></li>
+                <li class="list-group-item list-group-item-light d-flex justify-content-between"><span>Price</span><span class="fw-bold">{{ "{:,.0f}".format(post.unit_price) }} VNĐ</span></li>
+                <li class="list-group-item list-group-item-light d-flex justify-content-between"><span>Status</span><span class="fw-bold">{% if post.enable %} {{ "Available" }} {% else %} {{ "Not availble" }} {% endif %}</span></li>
                 <li class="list-group-item list-group-item-light d-flex justify-content-between"><span>Stock</span><span class="fw-bold">{{post.available_quantity}}</span></li>
                 <li class="list-group-item list-group-item-light d-flex justify-content-between">etc</li>
             </ul>
@@ -103,8 +140,8 @@
             class="btn btn-primary mt-3 w-100"
             role="button"
             aria-disabled="true"
-            href="{{url_for('orders.orderBooks')}}"
+            href="{{url_for('cart.buy_now', id=post.id)}}"
             >Buy Now</a
         >
-    <div>
+    </div>
 {% endblock index %}

@@ -1,56 +1,61 @@
-{% extends "layout.html" %} 
+{% extends "layout.html" %}
 {% block content %}
     <h3 class="bold">
         <i class="glyphicon glyphicon-shopping-cart"></i> Your Shopping Cart
     </h3>
 
-    <table class="table table-striped ">
+    <table class="table table-striped mt-4">
         <thead>
-            <tr>
-                <th scope="col">#Image</th>
-                <th scope="col">Book Name</th>
-                <th scope="col">Quantity</th>
-                <th scope="col">Total</th>
-                <th scope="col"></th>
-            </tr>
+        <tr>
+            <th scope="col">Image</th>
+            <th scope="col">Book Name</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Total</th>
+            <th scope="col"></th>
+        </tr>
         </thead>
         <tbody>
-            {% for product in products %}
-            <tr >
+        {% for product in products %}
+            <tr>
                 <th>
                     <div class="ratio ratio-1x1" style="width: 5rem; height: 5rem">
                         <img
-                            src="{{url_for('static', filename='profile_pics/' + product['image_src'])}}"
-                            class="figure-img img-fluid rounded"
-                            alt="..."
+                                src="{{ product['image_src'] }}"
+                                class="figure-img img-fluid rounded"
+                                alt="..."
                         />
                     </div>
                 </th>
                 <th>
                     <a
-                        class="article-title bold h5"
-                        href="{{url_for('books.bookDetail', book_id=product.id)}}"
-                        >{{ product['name'] }}</a
+                            class="article-title bold h5"
+                            href="{{ url_for('books.bookDetail', book_id=product.id) }}"
+                    >{{ product['name'] }}</a
                     >
-                    <p>&dollar;{{ product['unit_price'] / 100 }}</p>
+                    <p>{{ "{:,.0f}".format(product.unit_price) }} VNĐ</p>
                 </th>
                 <th>
-                    <p>{{ product['quantity'] }}</p>
+                    <input onchange="handleChangeQuantity({{ product['index'] }}, this)" style="width: 5rem"
+                           type="number" id="quantity" class="form-control" name="quantity" min="1"
+                           value="{{ product.quantity }}"/>
+                </th>
+
                 </div>
                 <th>
                     <p>
                         <strong
-                            >&dollar;{{ product['total'] / 100 }}</strong
+                        >{{ "{:,.0f}".format(product.total) }} VNĐ</strong
                         >
                     </p>
                 </th>
                 <th>
-                    <a class="btn btn-danger btn-xs" href="{{ url_for('cart.removeFromCart', index=product['index']) }}" role="button">
+                    <a class="btn btn-danger btn-xs" href="{{ url_for('cart.removeFromCart', index=product['index']) }}"
+                       role="button">
                         <i class="bi bi-trash"></i>
                     </a>
                 </th>
             </tr>
-            {% endfor %}
+        {% endfor %}
         </tbody>
     </table>
 {% endblock content %}
@@ -59,43 +64,42 @@
         <i class="glyphicon glyphicon-th-list"></i> Cart Summary
     </h3>
 
-    <div class="panel panel-primary">
-        <div class="panel-body">Current Cart Value</div>
+    <div class="panel panel-primary mt-4">
+
         <ul class="list-group">
             <li class="list-group-item">
                 <p class=" d-flex justify-content-between">
                     {{ quantity_total }} Items
                     <strong class="pull-right"
-                        >&dollar;{{ grand_total / 100 }}</strong
+                    >{{ "{:,.0f}".format(grand_total) }} VNĐ</strong
                     >
                 </p>
                 <p class=" d-flex justify-content-between">
                     24hr Shipping
-                    <strong class="pull-right">&dollar;10</strong>
+                    <strong class="pull-right">{{ "{:,.0f}".format(quick_ship) }} VNĐ</strong>
                 </p>
             </li>
             <li class="list-group-item ">
                 <p class="d-flex justify-content-between">
                     Total
                     <strong class="pull-right"
-                        >&dollar;{{ grand_total_plus_shipping / 100
-                        }}</strong
+                    >{{ "{:,.0f}".format(grand_total_plus_shipping) }} VNĐ</strong
                     >
                 </p>
                 <div class="panel-footer d-flex justify-content-between align-items-center">
-                    {%if quantity_total>0%}
-                    <a class="icon-link icon-link-hover btn btn-primary" href="{{ url_for('orders.checkout') }}">
-                        Checkout
-                        <i class="bi bi-arrow-right p-0 m-0"></i>
-                    </a>
-                    {%else%}
-                    <a href="#" class="btn btn-danger disabled" style="cursor: no-drop;">
-                        Checkout <i class="bi bi-dash-circle"></i>
-                    </a>
-                    {%endif%}
+                    {% if quantity_total>0 %}
+                        <a class="icon-link icon-link-hover btn btn-primary" href="{{ url_for('orders.checkout') }}">
+                            Checkout
+                            <i class="bi bi-arrow-right p-0 m-0"></i>
+                        </a>
+                    {% else %}
+                        <a href="#" class="btn btn-danger disabled" style="cursor: no-drop;">
+                            Checkout <i class="bi bi-dash-circle"></i>
+                        </a>
+                    {% endif %}
                     <a
-                        href="{{ url_for('main.home') }}"
-                        class="btn btn-link btn-sm"
+                            href="{{ url_for('main.home') }}"
+                            class="btn btn-link btn-sm"
                     >
                         <mark>Continue Shopping</mark>
                     </a>
@@ -103,6 +107,18 @@
             </li>
         </ul>
     </div>
-</div>
+    </div>
+    <script>
+        function handleChangeQuantity(index, element) {
+            const quantity = element.value
+            fetch(`/api/changeQuantity?index=${index}&quantity=${quantity}`,
+                {
+                    method: "POST",
+                },
+            ).then(res => {
+                location.reload()
+            })
 
+        }
+    </script>
 {% endblock index %}

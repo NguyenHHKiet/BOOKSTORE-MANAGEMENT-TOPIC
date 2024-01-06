@@ -1,7 +1,7 @@
-{% extends "layout.html" %} {% block content %}
+{% extends "layout.html" %} {% block body %}
 
 <h1>Welcome to Home Page</h1>
-<div class="grid-container">
+<div class="grid-container mt-2">
     {% for post in posts %}
     <article class="media content-section">
         <div class="media-body">
@@ -18,11 +18,11 @@
                                     height: 30px;
                                     margin: 0px 10px 0px 0;
                                 "
-                                src="{{url_for('static', filename='profile_pics/' + post.image_src)}}"
+                                src="{{post.image_src}}"
                             />
                         </li>
                         <li class="breadcrumb-item">
-                            <a class="">{{ post.author.name }}</a>
+                            <a class="text-decoration-none">{{ post.author.name }}</a>
                         </li>
                         <li class="breadcrumb-item active" aria-current="page">
                             <small class="text-muted"
@@ -32,9 +32,9 @@
                     </ol>
                 </nav>
             </div>
-            <h2>
-                <a
-                    class="article-title"
+            <h2 class="d-inline-blocks text-truncate w-100">
+                <a  style="text-decoration: none"
+                    class=""
                     href="{{url_for('books.bookDetail', book_id=post.id)}}"
                     >{{ post.name }}</a
                 >
@@ -42,30 +42,28 @@
             <figure class="figure w-100">
                 <div class="ratio ratio-1x1">
                     <img
-                        src="{{url_for('static', filename='profile_pics/' + post.image_src)}}"
+                        src="{{post.image_src}}"
                         class="figure-img img-fluid rounded"
                         alt="..."
                     />
                 </div>
-                <figcaption class="figure-caption article-content">
-                    {{ post.description }}
-                </figcaption>
+                <div class="article-description mt-2">{{ post.description }}</div>
             </figure>
         </div>
         <div class="float-end" style="">
             {% if post.in_stock() > 0 %}
                 <a
-                    class="btn btn-info text-white btn-sm"
+                    class="btn btn-info text-white btn-sm me-2 icon-link icon-link-hover align-items-baseline"
                     role="button"
                     aria-disabled="true"
                     href="{{ url_for('cart.quickAdd', id=post.id) }}"
-                    ><i class="bi bi-cart-plus-fill"></i> Add Cart</a
+                    ><i class="bi bi-cart-plus-fill me-2"></i> Add Cart</a
                 >
                 <a
                     class="btn btn-primary btn-sm"
                     role="button"
                     aria-disabled="true"
-                    href="{{url_for('orders.orderBooks')}}"
+                    href="{{url_for('cart.buy_now', id=post.id)}}"
                     >Buy Now</a
                 >
             {% endif %}
@@ -73,31 +71,43 @@
     </article>
     {% endfor %}
 </div>
-{% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1,
-right_current=2) %} {% if page_num %} {% if posts.page == page_num %}
-<a
-    class="btn btn-info mb-4 text-white"
-    href="{{url_for('main.home', page=page_num)}}"
-    >{{page_num}}</a
->
-{% else %}
-<a
-    class="btn btn-outline-info mb-4"
-    href="{{url_for('main.home', page=page_num)}}"
-    >{{page_num}}</a
->
-{% endif %} {% else %} ... {% endif %} {% endfor %} {% endblock content %}
 
-{% block index %} 
-    <div class="content-section">
-        <h3>Our Sidebar</h3>
-        <p class='text-muted'>You can put any information here you'd like.
-            <ul class="list-group">
-                <li class="list-group-item list-group-item-light">Latest Posts</li>
-                <li class="list-group-item list-group-item-light">Announcements</li>
-                <li class="list-group-item list-group-item-light">Calendars</li>
-                <li class="list-group-item list-group-item-light">etc</li>
+{% if cate_id == None%}
+    {% if pages>1 %}
+<ul class="pagination mt-1">
+        {% for i in range(pages) %}
+        <li class="page-item"><a class="page-link" href="/?page={{ i + 1 }}">{{ i + 1 }}</a></li>
+        {% endfor %}
+</ul>
+    {% endif %}
+{% endif %}
+
+
+    {% if cate_id   %}
+        {% if  numCate>1%}
+            <ul class="pagination mt-1">
+                {% for i in range(numCate) %}
+                    <li class="page-item">
+                        <a class="page-link" href="/?cate_id={{ cate_id }}&page={{ i + 1 }}">{{ i + 1 }}</a>
+                    </li>
+                {% endfor %}
             </ul>
-        </p>    
-    <div>
-{% endblock index %}
+        {% endif %}{% endif %}
+
+
+
+    {% if kw   %}
+
+        {% if num>1 %}
+            <ul class="pagination mt-1">
+                {% for i in range(num) %}
+                    <li class="page-item">
+                        <a class="page-link" href="?search={{ kw }}&page={{ i + 1 }}">{{ i + 1 }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+
+    {% endif %}{% endif %}
+
+    
+{% endblock body %}

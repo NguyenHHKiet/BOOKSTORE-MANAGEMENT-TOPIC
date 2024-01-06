@@ -44,6 +44,7 @@
         });
         const fm =  document.getElementById('form');
         fm.addEventListener("submit", (event) => {
+            fm.disabled = true
             event.preventDefault();
             payload = excel_file.files[0]
             if (!payload) {
@@ -60,10 +61,12 @@
                         if (res.ok) {
                             alert("Update book successful")
                         }
-                    })
-                    .catch((err) => {
-                        alert(err.data)
-                    })
+                        else {
+                            alert("Something went wrong")
+                        }
+                    }).finally(() => {
+                        fm.disabled = false
+                })
             }
         })
     </script>

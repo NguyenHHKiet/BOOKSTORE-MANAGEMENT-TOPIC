@@ -1,154 +1,473 @@
 {% extends "layout.html" %} {% block body %}
 
-<div>Begining The New Task Employees</div>
-<div class="media-body">
-    <h2 class="account-heading">{{current_user.email}}</h2>
-    <main class="container">
-        <div class="row">
-            <div class="content-section col-md-6">
-                <form
-                    method="POST"
-                    action="{{ url_for('users.staff') }}"
-                    class="row"
-                >
-                    {{form.hidden_tag()}} {{ form.csrf_token }}
-                    <fiedset class="form-group">
-                        <legend class="border-bottom mb-2">
-                            <h2 class="text-white rounded p-3 text-bg-info">
-                                Product Order Form
-                            </h2>
-                        </legend>
-                        <div class="d-flex gap-2 mb-2">
-                            Id {{ form.id(class='form-control', type='number')
-                            }}
-                        </div>
-                        <div
-                            class="d-flex justify-content-between align-items-center gap-2"
-                        >
-                            <div class="">Quantity</div>
-                            {{ form.quantity(class='form-control',
-                            type='number', min=1, step=1, value=1) }}
-                            <button
-                                type="submit"
-                                class="btn btn-info text-white"
-                                style="white-space: nowrap"
+    <div>Current staff</div>
+    <h2 class="account-heading">{{ current_user.first_name + " " + current_user.last_name }}</h2>
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <button class="nav-link active" id="sale-tab" data-bs-toggle="tab" data-bs-target="#sale" type="button"
+                    role="tab" aria-controls="nav-home" aria-selected="true">Sale
+            </button>
+            <button class="nav-link" id="manage-tab" data-bs-toggle="tab" data-bs-target="#manage" type="button"
+                    role="tab" aria-controls="nav-profile" aria-selected="false">Manage
+            </button>
+        </div>
+    </nav>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="sale" role="tabpanel" aria-labelledby="sale-tab">
+            <div class="mt-4">
+                <main class="container">
+                    <div class="row">
+                        <div class="content-section col-md-6 border-0">
+                            <form
+                                    method="POST"
+                                    action="{{ url_for('users.staff') }}"
+                                    class="row"
                             >
-                                <i class="bi bi-plus-square-fill"></i> Add
-                            </button>
+                                {{ form.hidden_tag() }} {{ form.csrf_token }}
+                                <fiedset class="form-group">
+                                    <legend class="border-bottom mb-2">
+                                        <h2 class="text-white rounded p-3 text-bg-info">
+                                            Product Order Form
+                                        </h2>
+                                    </legend>
+                                    <div class="d-flex gap-2 mb-2">
+                                        Id {{ form.id(class='form-control', type='number') }}
+                                    </div>
+                                    <div
+                                            class="d-flex justify-content-between align-items-center gap-2"
+                                    >
+                                        <div class="">Quantity</div>
+                                        {{ form.quantity(class='form-control',
+                            type='number', min=1, step=1, value=1) }}
+                                        <button
+                                                type="submit"
+                                                class="btn btn-info text-white"
+                                                style="white-space: nowrap"
+                                        >
+                                            <i class="bi bi-plus-square-fill"></i> Add
+                                        </button>
+                                    </div>
+                                </fiedset>
+                            </form>
                         </div>
-                    </fiedset>
-                </form>
+                        <form autocomplete="off" action="{{ url_for('orders.checkout') }}" method="GET"
+                              class="col-md-6">
+                            <h3>Your Order</h3>
+                            <table class="table table-striped content-section">
+
+                                <thead>
+                                <tr>
+                                    <th scope="col">ID</th>
+                                    <th scope="col" colspan="4">Book Name</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Total</th>
+                                    <th scope="col"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for product in products %}
+                                    <tr>
+                                        <td scope="row">1</td>
+                                        <td colspan="4">{{ product['name'] }}</td>
+                                        <td>{{ "{:,.0f}".format(product['unit_price']) }} VNĐ</td>
+                                        <td>{{ product['quantity'] }}</td>
+                                        <td>
+                                            <p
+                                            >{{ "{:,.0f}".format(product['total']) }} VNĐ</p
+                                            >
+                                        </td>
+                                        <th>
+                                            <a
+                                                    class="btn btn-danger btn-sm"
+                                                    href="{{ url_for('cart.removeFromCart', index=product['index'], next=url_for("users.staff")) }}"
+                                                    role="button"
+                                            >
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </th>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            <table class="table content-section">
+                                <tbody>
+                                <tr>
+                                    <td><strong>Total Payment</strong></td>
+                                    <td class="text-center">
+                                        <strong class=""
+                                        > {{ "{:,.0f}".format(grand_total) }} VNĐ </strong
+                                        >
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <br/>
+
+                            <div>
+                                <label for="user"><h3>Customer</h3></label>
+                                <input type="text" class="form-control" placeholder="User" aria-label="User"
+                                       id="searchUser" name="customer_phone" oninput="handleAutocompleteUser(this)"
+                                >
+                                <input type="hidden" class="form-control"
+                                       name="staff_id" value="{{ current_user.id }}"
+                                >
+                            </div>
+                            <button
+                                    type="submit"
+                                    class="btn btn-info text-white py-2 px-4 float-end fw-bold mt-2"
+                            >
+                                Buy
+                            </button>
+                        </form>
+                    </div>
+                </main>
             </div>
-            <form action="{{ url_for('orders.checkout') }}" class="col-md-6">
-                <table class="table table-striped content-section">
-                    <h3>Your Order</h3>
-                    <thead>
+        </div>
+        <div class="tab-pane fade " id="manage" role="tabpanel" aria-labelledby="manage-tab">
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <div>
+                        <form id="searchOrder" action="">
+                            <div class="mb-3">
+                                <label for="orderID" class="form-label">Order ID</label>
+                                <input type="text" class="form-control" id="orderID" aria-describedby="orderHelp">
+                                <div id="orderHelp" class="form-text">Find order by ID</div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Find</button>
+                        </form>
+                    </div>
+                    <div id="orderSummary" class="mt-5">
+                        <h3>Order Summary</h3>
+                        <div class="panel panel-primary mt-4">
+
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    <p class=" d-flex justify-content-between" id="quantity-total">
+                                        Items
+                                    </p>
+                                    <p id="quick-ship" class=" d-flex justify-content-between">
+
+                                    </p>
+
+                                </li>
+                                <li class="list-group-item ">
+                                    <p class="d-flex justify-content-between" id="total-payment-plus-shipping">
+                                        Total
+                                    </p>
+                                </li>
+                                <li class="list-group-item ">
+                                    <p class="d-flex justify-content-between" id="order-status">
+                                        Status
+                                    </p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="mt-5">
+                        <h3>Action</h3>
+                        <div class="mt-4">
+                            <div class="row">
+                                <div class="col-md-7">
+
+                                    <input class="form-control " disabled type="number" min="0" id="input-money"
+                                           aria-describedby="cashLabel">
+                                    <label class="form-label form-text" for="input-money" id="cashLabel">For in cash
+                                        payment method only</label>
+                                </div>
+                                <div class="col-md-5">
+                                    <button type="button" class="btn btn-primary disabled bottom-0" id="pay">Pay
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-4">
+                                    <button type="button" class="btn btn-primary disabled" id="delivered">Delivered
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8 mt-4">
+                    <h3 class="ps-3">Order Details</h3>
+                    <table class="table table-striped mt-4">
+                        <thead>
                         <tr>
-                            <th scope="col">#</th>
-                            <th scope="col" colspan="4">Book Name</th>
-                            <th scope="col">Price</th>
+                            <th scope="col">Image</th>
+                            <th scope="col">Book Name</th>
                             <th scope="col">Quantity</th>
                             <th scope="col">Total</th>
                             <th scope="col"></th>
                         </tr>
-                    </thead>
-                    <tbody>
-                        {% for product in products %}
-                        <tr>
-                            <th scope="row">1</th>
-                            <td colspan="4">{{ product['name'] }}</td>
-                            <td>&dollar;{{ product['unit_price'] / 100 }}</td>
-                            <td>{{ product['quantity'] }}</td>
-                            <th>
-                                <strong
-                                    >&dollar;{{ product['total'] / 100
-                                    }}</strong
-                                >
-                            </th>
-                            <th>
-                                <a
-                                    class="btn btn-danger btn-sm"
-                                    href="{{ url_for('cart.removeFromCart', index=product['index']) }}"
-                                    role="button"
-                                >
-                                    <i class="bi bi-trash"></i>
-                                </a>
-                            </th>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                <table class="table content-section">
-                    <tbody>
-                        <tr>
-                            <td><strong>24hr Shipping</strong></td>
-                            <td>
-                                <strong class="pull-right">&dollar;10</strong>
-                            </td>
-                            <td><strong>Total</strong></td>
-                            <td>
-                                <strong class="pull-right"
-                                    >&dollar;{{ grand_total / 100 }}</strong
-                                >
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>Total Payment + Shipping</strong></td>
-                            <td>
-                                <strong class="pull-right"
-                                    >&dollar;{{ grand_total_plus_shipping / 100
-                                    }}</strong
-                                >
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <br />
-                <div class="form-check">
-                    <input
-                        class="form-check-input"
-                        type="radio"
-                        name="flexRadioDefault"
-                        id="flexRadioDefault1"
-                    />
-                    <label class="form-check-label" for="flexRadioDefault1">
-                        <em> <strong>Paypal</strong></em>
-                    </label>
-                    <span>
-                        <img
-                            src="https://www.logolynx.com/images/logolynx/c3/c36093ca9fb6c250f74d319550acac4d.jpeg"
-                            alt=""
-                            width="50"
-                        />
-                    </span>
-                </div>
-                <div class="form-check">
-                    <input
-                        class="form-check-input"
-                        type="radio"
-                        name="flexRadioDefault"
-                        id="flexRadioDefault2"
-                        checked
-                    />
-                    <label class="form-check-label" for="flexRadioDefault2">
-                        <em><strong>Direct Bank Transfer</strong></em>
-                    </label>
-                    <p>
-                        Make your payment directly into our bank account. Please
-                        use your Order ID as the payment reference. Your order
-                        will not be shipped until the funds have cleared in our
-                        account.
-                    </p>
-                </div>
-                <button
-                    type="submit"
-                    class="btn btn-info text-white py-2 px-4 float-end fw-bold"
-                >
-                    Place Order
-                </button>
-            </form>
-        </div>
-    </main>
-</div>
+                        </thead>
+                        <tbody id="orderDetails">
 
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        let currentFocus = -1
+        let orderID = -1
+
+        async function handleAutocompleteUser(element) {
+            closeList()
+            if (!element.value) return
+
+            kw = element.value
+            max = 5
+            result = await fetch(`/api/user/search_by_phone?kw=${kw}&max=${max}`)
+                .then(response => response.json())
+            if (result.length < 1) {
+                return
+            } else {
+                currentFocus = -1
+                result_element = document.createElement("ul")
+                result_element.setAttribute("style", "z-index: 99")
+                result_element.setAttribute("id", "autocomplete-list")
+                result_element.setAttribute("class", "list-group autocomplete-items")
+                element.parentNode.appendChild(result_element)
+                for (let i = 0; i < result.length; i++) {
+                    result_item = document.createElement("li")
+                    result_item.setAttribute("class", "list-group-item")
+                    result_item.innerHTML = "<strong>" + result[i]['phone'] + "</strong>"
+                    result_item.innerHTML += "<p style='max-width: 200px'>" + "Name: " + result[i]['name'] + "</p>"
+                    result_item.innerHTML += "<input type='hidden' value='" + result[i]['phone'] + "'>"
+                    result_item.addEventListener("click", (e) => {
+                        if (e.target.classList.contains("list-group-item")) {
+                            element.value = e.target.getElementsByTagName("input")[0].value
+                            closeList()
+                        }
+                    })
+                    result_element.appendChild(result_item)
+                }
+            }
+        }
+
+
+        function closeList() {
+            list = document.getElementsByClassName("autocomplete-items")
+            for (el of list) {
+                el.parentNode.removeChild(el)
+            }
+        }
+
+        function addActive(x) {
+
+            if (!x) return false;
+            removeActive(x);
+            if (currentFocus >= x.length) currentFocus = 0;
+            if (currentFocus < 0) currentFocus = (x.length - 1);
+            x[currentFocus].classList.add("active");
+        }
+
+        function removeActive(x) {
+            for (var i = 0; i < x.length; i++) {
+                x[i].classList.remove("active");
+            }
+        }
+
+        window.onload = () => {
+            document.addEventListener("click", function (e) {
+                closeList();
+            });
+
+            document.getElementById("searchUser").addEventListener("keydown", (e) => {
+                var x = document.getElementById("autocomplete-list");
+                if (x) x = x.getElementsByTagName("li");
+                if (x) {
+                    if (e.keyCode === 40) {
+
+                        currentFocus++;
+                        addActive(x);
+                    } else if (e.keyCode === 38) { //up
+                        currentFocus--;
+                        addActive(x);
+                    } else if (e.keyCode === 13) {
+                        e.preventDefault();
+                        if (currentFocus > -1) {
+                            if (x) x[currentFocus].click();
+                        }
+                    }
+                }
+            })
+        }
+    </script>
+    <script>
+        window.onload = () => {
+            document.getElementById("delivered").addEventListener("click", async (e) => {
+                if (orderID > 0) {
+                    const response = await fetch(`/api/order_delivered?order_id=${orderID}`, {
+                        method: "POST"
+                    }).then((res) => res.json())
+                    if (response['code'] === 200) {
+                        if (confirm("Order is delivered")) {
+                            clearData()
+                        }
+                    } else {
+                        alert("Fail")
+                    }
+                }
+            })
+            document.getElementById("pay").addEventListener("click", async (e) => {
+                if (orderID > 0) {
+                    const money = document.getElementById("input-money").value
+                    if (money == null) {
+                        alert("Please enter money")
+                        return
+                    }
+                    const response = await fetch("/api/order/cash/pay", {
+                        method: "POST",
+                        body: JSON.stringify({
+                            "order_id": orderID,
+                            "received_money": money
+                        }),
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    }).then(res => res.json())
+                    if (response['code'] === 200) {
+
+                        if (confirm("Order has been paid successfully")) {
+                            clearData()
+                        }
+
+                    } else {
+                        alert("Order has been paid failed")
+                    }
+                }
+            })
+            document.getElementById("searchOrder").addEventListener("submit", async (e) => {
+                e.preventDefault()
+
+                order_id = document.getElementById("orderID").value
+                if (order_id === "" || order_id === null) {
+                    alert("Please enter order ID")
+                    return
+                }
+                data = await fetch(`/api/order_details?order_id=${order_id}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                }).then(reponse => {
+                    if (reponse.status === 200) {
+                        return reponse.json()
+                    } else {
+                        alert("ID not found")
+                        return null
+                    }
+                })
+                    .catch(error => {
+                        console.log(error)
+                        return null
+                    })
+                if (data) {
+                    clearData()
+                    // order details
+                    orderID = data['order_id']
+                    orderDetailsElement = document.getElementById("orderDetails")
+                    // details
+                    for (let detail of data["products"]) {
+                        let detailElement =
+                            `<tr class="mt-2">
+                                <th>
+                                    <div class="ratio ratio-1x1" style="width: 5rem; height: 5rem">
+                                        <img
+                                                src="${detail['image_src']}"
+                                                class="figure-img img-fluid rounded"
+                                                alt="..."
+                                        />
+                                    </div>
+                                </th>
+                                <th>
+                                    <a
+                                            class="article-title bold h5 text-decoration-none"
+                                            href=""
+                                    >${detail['name']}</a
+                                    >
+                                    <p>${detail['unit_price'].toLocaleString()} VNĐ</p>
+                                </th>
+                                <th>
+                                    <input style="width: 5rem"
+                                           type="number" id="quantity" class="form-control" name="quantity" min="1"
+                                           value="${detail['quantity']}" disabled/>
+                                </th>
+
+
+                            <th>
+                                <p>
+                                    <strong
+                                    >${detail['total'].toLocaleString()} VNĐ</strong
+                                    >
+                                </p>
+                            </th>
+                           </tr>`
+
+                        orderDetailsElement.innerHTML += detailElement
+                    }
+                    // order summaries
+                    document.getElementById("quantity-total").innerHTML = ` ${data['order_quantity_total']} Items
+                                        <strong class="pull-right"
+                                        >${data['grand_total'].toLocaleString()} VNĐ</strong
+                                        >`
+                    if (data['quick_ship']) {
+                        document.getElementById("quick-ship").innerHTML = ` 24hr Shipping
+                                    <strong class="pull-right">${data["quick_ship"].toLocaleString()} VNĐ</strong>`
+                    }
+                    document.getElementById("total-payment-plus-shipping").innerHTML = `Total
+                                        <strong class="pull-right"
+                                        >${data['grand_total_plus_shipping'].toLocaleString()} VNĐ</strong
+                                        >`
+                    // check status
+                    statusElement = document.getElementById("order-status")
+                    payButton = document.getElementById("pay")
+                    deliveredButton = document.getElementById("delivered")
+                    inputMoneyElement = document.getElementById("input-money")
+                    if (data['isCanceled'] || data['isDelivered']) {
+                        payButton.classList.add("disabled")
+                        deliveredButton.classList.add("disabled")
+                        if (data['isCanceled']) {
+                            statusElement.innerText = "Status: CANCELED"
+                        } else {
+                            statusElement.innerText = "Status: DELIVERED"
+                        }
+                    } else if (!data['isPaid']) {
+                        payButton.classList.remove("disabled")
+                        inputMoneyElement.disabled = false
+                        deliveredButton.classList.add("disabled")
+                        statusElement.innerText = "Status: UNPAID"
+                    } else if (!data['isDelivered']) {
+                        payButton.classList.add("disabled")
+                        deliveredButton.classList.remove("disabled")
+                        statusElement.innerText = "Status: UNDELIVERED"
+
+                    }
+
+
+                }
+            })
+            function clearData() {
+                    orderID = -1
+                    document.getElementById("order-status").innerHTML = "Status"
+                    document.getElementById("orderDetails").innerHTML = ""
+                    document.getElementById("quantity-total").innerHTML = "Items"
+                    document.getElementById("quick-ship").innerHTML = ""
+                    document.getElementById("total-payment-plus-shipping").innerHTML = "Total"
+                    document.getElementById("input-money").value = ""
+                    document.getElementById("input-money").disable = true
+                    document.getElementById("pay").classList.add("disabled")
+                    document.getElementById("delivered").classList.add("disabled")
+            }
+            // clear data  when order id is empty
+            document.getElementById("orderID").addEventListener("input", (e) => {
+                if (!e.target.value || e.target.value === "") {
+                    clearData()
+                }
+            })
+        }
+    </script>
 {% endblock body %}
