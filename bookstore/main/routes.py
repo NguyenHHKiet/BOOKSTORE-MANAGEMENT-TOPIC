@@ -11,6 +11,7 @@ main = Blueprint('main', __name__)
 @main.route("/home")
 def home():
     cate_id = request.args.get('cate_id')
+    page = request.args.get('page', 1, type=int)
     num = Book.query.filter(Book.enable.__eq__(True)).count()
     numCate = None
     if cate_id:
@@ -20,7 +21,7 @@ def home():
     #     session["cart"] = []
     # products, grand_total, grand_total_plus_shipping, quantity_total = handle_cart()
 
-    page = request.args.get('page', 1, type=int)
+
     posts=dao.load_book(cate_id, page)
     if current_user.is_authenticated:
         if "cart" in session:
@@ -60,11 +61,17 @@ def import_book():
 def searchItems():
     data = request.args.get('search')
     page = request.args.get('page', 1, type=int)
-    res = Book.query.filter(Book.name.contains(data)).paginate(page=page, per_page=5)
-    if not data or not res:
+    num = Book.query.filter(Book.name.contains(data)).count()
+
+    res = dao.load_book(kw=data, page=page)
+    
+    if not data or num==0:
         flash('Book not found!!', 'warning')
         return redirect(url_for('main.home'))
-    return render_template("home.html", posts=res)
+    num=math.ceil(num/app.config['PAGE_SIZE'])
+    print(num)
+    return render_template("home.html", posts=res, num=num, kw=data)
+
 
 @main.route("/statistic", methods=['GET'])
 def statistic():

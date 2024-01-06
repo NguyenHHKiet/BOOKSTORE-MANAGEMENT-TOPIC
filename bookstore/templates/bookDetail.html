@@ -66,6 +66,46 @@
         </figure>
     </div>
 </article>
+
+
+{% if  current_user.is_authenticated %}
+ <div>
+    <div>
+        <textarea id="commentId" class="form-control" placeholder="Nhập nội dung bình luận"></textarea>
+    </div>
+    <input onclick="addComment({{ post.id }})" type="button" class="btn btn-danger" style="margin-top: 7px" value="Bình luận"/>
+
+ </div>
+    {% else %}
+    <a href="{{ url_for('users.login', next='books.bookDetail', book_id=post.id) }}">Đăng nhập để bình luận</a>
+    {% endif %}
+
+<br></br>
+
+    {% if pages>1 %}
+            <ul class="pagination mt-1">
+                    {% for i in range(1, 1+pages) %}
+                    <li class="page-item"><a class="page-link" href="javascript:;" onclick="loadComments({{ post.id }}, {{ i }})">{{ i }}</a></li>
+                    {% endfor %}
+            </ul>
+    {% endif %}
+
+    <div id="commentArea">
+
+
+    </div>
+
+
+    <script>
+        window.onload=function (){
+            loadComments({{ post.id }})
+            {#let date=document.getElementsByClassName('myDate')#}
+            {#for (let i=0; i<date.length;i++)#}
+            {#    date[i].innerText = moment(date[i].innerText).locale('vi').fromNow()#}
+            {##}
+        }
+    </script>
+
 {% endblock content %}
 
 {% block index %} 

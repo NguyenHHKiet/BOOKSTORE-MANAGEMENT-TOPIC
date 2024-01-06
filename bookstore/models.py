@@ -1,3 +1,5 @@
+import datetime
+
 from sqlalchemy import Column, Integer, Boolean, String, ForeignKey, DateTime, func
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.dialects.mysql import LONGTEXT
@@ -21,6 +23,7 @@ class Role(db.Model, RoleMixin):
         return self.name
 
 
+
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), unique=True)
@@ -38,7 +41,7 @@ class User(db.Model, UserMixin):
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('users', lazy='dynamic'))
     fs_uniquifier = db.Column(db.String(64), unique=True, nullable=False)
-
+    comments = relationship("Comment", backref='user', lazy=True)
     def __str__(self):
         return self.email
 
@@ -87,6 +90,7 @@ class Book(db.Model):
     order_details = relationship("OrderDetails", backref= 'book', lazy= True)
     enable = Column(Boolean, nullable=False, default=False)
     description = db.Column(LONGTEXT)
+    comments=relationship("Comment", backref= 'book', lazy= True)
     
     def in_stock(self):
         if db.session:
@@ -105,6 +109,17 @@ class Book(db.Model):
                 return self.available_quantity
         else:
             return self.available_quantity
+
+
+class Comment(db.Model):
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    content = Column(String(255), nullable=False)
+    created_date = Column(DateTime, nullable=False, default=datetime.datetime.now())
+    user_id = Column(Integer, ForeignKey(User.id), nullable=False)
+    book_id = Column(Integer, ForeignKey(Book.id), nullable=False)
+
+    def __str__(self):
+        return self.content
 
 class ImportTicket(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -164,3 +179,4 @@ class BankingInformation(db.Model):
     bank_code = Column(String(20), nullable=False)
     card_type = Column(String(20), nullable=False)
     secure_hash = Column(String(256), nullable=False)
+

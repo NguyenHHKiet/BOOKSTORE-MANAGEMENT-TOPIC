@@ -19,8 +19,12 @@ def save_ticket(url):
 def load_cate():
     return Category.query.all()
 
-def load_book(cate_id=None, page=None):
+def load_book(cate_id=None, page=None, kw=None):
     books=Book.query.filter(Book.enable.__eq__(True))
+
+    if kw:
+        books=books.filter(Book.name.contains(kw))
+
     if cate_id:
         books = books.filter(Book.category_id.__eq__(cate_id))
 

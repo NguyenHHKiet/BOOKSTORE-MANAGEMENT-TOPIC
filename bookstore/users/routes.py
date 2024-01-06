@@ -75,6 +75,8 @@ def login():
             login_user(user, remember=form.remember.data)
             flash(f'You have been logged in!', 'success')
             # remember previous page is required and transferred to login
+            if 'book_id' in request.args:
+                return redirect(url_for(request.args.get('next', 'index'), book_id=request.args['book_id']))
             next_page = request.args.get('next')
             return redirect(next_page) if next_page else redirect(url_for('main.home'))
         else:
