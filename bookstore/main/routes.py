@@ -65,7 +65,7 @@ def searchItems():
 
     res = dao.load_book(kw=data, page=page)
     
-    if not data or not res:
+    if not data or num==0:
         flash('Book not found!!', 'warning')
         return redirect(url_for('main.home'))
     num=math.ceil(num/app.config['PAGE_SIZE'])
