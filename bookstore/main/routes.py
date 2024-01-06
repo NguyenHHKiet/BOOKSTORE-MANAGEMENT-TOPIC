@@ -69,7 +69,7 @@ def searchItems():
         flash('Book not found!!', 'warning')
         return redirect(url_for('main.home'))
     num=math.ceil(num/app.config['PAGE_SIZE'])
-    print(num)
+
     return render_template("home.html", posts=res, num=num, kw=data)
 
 

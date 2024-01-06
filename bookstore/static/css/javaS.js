@@ -19,6 +19,7 @@ function addComment(bookId){
             if(data.status == 201){
                 let comments = document.getElementById('commentArea')
                 comments.innerHTML=getCommentHtml(data.comment)+comments.innerHTML
+                content.value=''
             }
             else if (data.status == 404){alert(data.err_msg)}
         })
@@ -51,8 +52,9 @@ function getCommentHtml(comment){
             </div>
 
             <div class="col-md-11 col-xs-8" style="">
+                <p>${ comment.user.username }</p>
                 <p>${ comment.content }</p>
-                <p><em>${moment(comment.created_date).locale('vi').fromNow() }</em></p>
+                <p>Bình luận lúc: <em>${moment(comment.created_date).locale('vi').fromNow() }</em></p>
             </div>
             <hr/>
      </div>
