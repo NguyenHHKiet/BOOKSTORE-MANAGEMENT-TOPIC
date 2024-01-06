@@ -1,4 +1,3 @@
-
 function addComment(bookId){
     let content = document.getElementById('commentId')
     if (content !== null){
@@ -41,22 +40,24 @@ function getCommentHtml(comment){
     if (image===null || !image.startsWith('https'))
         image='https://hanoispiritofplace.com/wp-content/uploads/2017/05/tai-anh-tinh-yeu-dep-5.jpg'
     return`
-    <div class="row" 
-        style=" margin: 5px 0"
-       
-        
-        
-        >
-            <div class="col-md-1 col-xs-4">
-                    <img class="rounded-circle img-fluid" alt="demo" src="${image}"/>
+    <div class="content-section">
+        <div class="d-flex">
+            <div class="w-100">
+                <img class="rounded-circle account-img"
+                    style="
+                        width: 30px;
+                        height: 30px;
+                        margin: 0px 10px 0px 0;
+                    "
+                    src="${image}"/>
+                <span class="text-muted">${ comment.user.username }</span>
             </div>
+            <p class="flex-shrink-1 text-nowrap text-success"><em>${moment(comment.created_date).locale('en').fromNow() }</em></p>
+        </div>
 
-            <div class="col-md-11 col-xs-8" style="">
-                <p>${ comment.user.username }</p>
-                <p>${ comment.content }</p>
-                <p>Bình luận lúc: <em>${moment(comment.created_date).locale('vi').fromNow() }</em></p>
-            </div>
-            <hr/>
-     </div>
+        <div class="bg-white rounded p-2 mt-1 border border-1" style="">
+            ${ comment.content }
+        </div>
+    </div>
     `
 }

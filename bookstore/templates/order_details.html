@@ -11,7 +11,6 @@
             <th scope="col">Book Name</th>
             <th scope="col">Quantity</th>
             <th scope="col">Total</th>
-            <th scope="col"></th>
         </tr>
         </thead>
         <tbody>
@@ -36,11 +35,9 @@
                 </th>
                 <th>
                     <input style="width: 5rem"
-                           type="number" id="quantity" class="form-control" name="quantity" min="1"
-                           value="{{ product.quantity }}" disabled/>
+                        type="number" id="quantity" class="form-control" name="quantity" min="1"
+                        value="{{ product.quantity }}" disabled/>
                 </th>
-
-
                 <th>
                     <p>
                         <strong
@@ -57,9 +54,7 @@
     <h3 class="bold">
         <i class="glyphicon glyphicon-th-list"></i> Order Summary
     </h3>
-
     <div class="panel panel-primary mt-4">
-
         <ul class="list-group">
             <li class="list-group-item">
                 <p class=" d-flex justify-content-between">

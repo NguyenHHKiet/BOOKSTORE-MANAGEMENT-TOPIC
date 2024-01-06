@@ -201,3 +201,8 @@ def handle_order_details(order_id):
         isDelivered = True if order.delivered_date is not None else False
         isCanceled = True if (order.paid_date is None) and (order.cancel_date < datetime.now()) else False
         return products, grand_total, grand_total_plus_shipping, order_quantity_total, quick_ship, isPaid, isDelivered, isCanceled
+
+def truncate_text(text, max_length=300):
+    if len(text) > max_length:
+        return text[:max_length] + "..."
+    return text

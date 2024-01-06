@@ -69,16 +69,13 @@
 
 
 {% if  current_user.is_authenticated %}
- <div>
     <div>
         <textarea id="commentId" class="form-control" placeholder="Nhập nội dung bình luận"></textarea>
+        <input onclick="addComment({{ post.id }})" type="button" class="btn btn-danger" style="margin-top: 7px" value="Bình luận"/>
     </div>
-    <input onclick="addComment({{ post.id }})" type="button" class="btn btn-danger" style="margin-top: 7px" value="Bình luận"/>
-
- </div>
-    {% else %}
+{% else %}
     <a href="{{ url_for('users.login', next='books.bookDetail', book_id=post.id) }}">Đăng nhập để bình luận</a>
-    {% endif %}
+{% endif %}
 
 <br></br>
 
