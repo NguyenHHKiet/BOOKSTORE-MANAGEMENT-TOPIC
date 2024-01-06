@@ -1,7 +1,7 @@
-{% extends "layout.html" %} {% block content %}
+{% extends "layout.html" %} {% block body %}
 
 <h1>Welcome to Home Page</h1>
-<div class="grid-container mt-5">
+<div class="grid-container mt-2">
     {% for post in posts %}
     <article class="media content-section">
         <div class="media-body">
@@ -32,10 +32,9 @@
                     </ol>
                 </nav>
             </div>
-            <h2 class="scrollable-title">
-
+            <h2 class="d-inline-blocks text-truncate w-100">
                 <a  style="text-decoration: none"
-                    class="article-title "
+                    class=""
                     href="{{url_for('books.bookDetail', book_id=post.id)}}"
                     >{{ post.name }}</a
                 >
@@ -48,17 +47,17 @@
                         alt="..."
                     />
                 </div>
-                <div class="scrollable">{{ post.description }}</div>
+                <div class="article-description mt-2">{{ post.description }}</div>
             </figure>
         </div>
         <div class="float-end" style="">
             {% if post.in_stock() > 0 %}
                 <a
-                    class="btn btn-info text-white btn-sm"
+                    class="btn btn-info text-white btn-sm me-2 icon-link icon-link-hover align-items-baseline"
                     role="button"
                     aria-disabled="true"
                     href="{{ url_for('cart.quickAdd', id=post.id) }}"
-                    ><i class="bi bi-cart-plus-fill"></i> Add Cart</a
+                    ><i class="bi bi-cart-plus-fill me-2"></i> Add Cart</a
                 >
                 <a
                     class="btn btn-primary btn-sm"
@@ -110,5 +109,5 @@
 
     {% endif %}{% endif %}
 
-{% endblock content %}
-
+    
+{% endblock body %}

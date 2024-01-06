@@ -7,13 +7,11 @@ SECRET_KEY = 'c007d6402c1b77b1fac427a381d995fd'
 DEBUG = True
 
 # Create in-memory database
+DATABASE_FILE = 'bookstore'
+# SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:@localhost/'+ DATABASE_FILE +'?charset=utf8mb4' % quote('admin')
+# SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:%s@localhost/bookstore?charset=utf8mb4' % quote('Bestpro890!@#')
 
-# DATABASE_FILE = 'bookstore'
-# SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:@localhost/'+ DATABASE_FILE +'?charset=utf8mb4' % quote('admin')# Non_password_MySQL
-SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:%s@localhost/bookstore?charset=utf8mb4' % quote('Bestpro890!@#')
-
-# DATABASE_FILE = 'bookstore'
-# SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:@localhost/'+ DATABASE_FILE +'?charset=utf8mb4' # Non_password_MySQL
+SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:@localhost/'+ DATABASE_FILE +'?charset=utf8mb4' # Non_password_MySQL
 # SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://admin:%s@localhost/bookstore?charset=utf8mb4' % quote('admin')
 # SQLALCHEMY_TRACK_MODIFICATIONS = True
 SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -38,15 +36,13 @@ SECURITY_REGISTERABLE = True
 SECURITY_SEND_REGISTER_EMAIL = False
 
 
-#VNPAY
-
+# VNPAY
 VNPAY_TMN_CODE = "3VNWSZOD"
 VNPAY_PAYMENT_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
 VNPAY_HASH_SECRET_KEY= "EZMMDCWDQNUCFSMYYCHUIEQZGQRYCWDH"
 VNPAY_RETURN_URL = "http://localhost:5000/payment_return"
 
-#MAIL
-
+# MAIL
 MAIL_DEFAULT_SENDER = "dangdinhhuyisme@gmail.com"
 MAIL_SERVER = "smtp.gmail.com"
 MAIL_PORT = 587

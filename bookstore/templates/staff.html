@@ -1,7 +1,7 @@
 {% extends "layout.html" %} {% block body %}
 
     <div>Current staff</div>
-    <h2 class="account-heading">{{ current_user.first_name + current_user.last_name }}</h2>
+    <h2 class="account-heading">{{ current_user.first_name + " " + current_user.last_name }}</h2>
     <nav>
         <div class="nav nav-tabs" id="nav-tab" role="tablist">
             <button class="nav-link active" id="sale-tab" data-bs-toggle="tab" data-bs-target="#sale" type="button"

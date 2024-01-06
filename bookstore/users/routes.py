@@ -42,7 +42,6 @@ def resend_verify_code():
         flash("Can't resend your verify code", "danger")
         return redirect(url_for("users.verify", user_id=user_id))
 
-
 @users.route("/verify_account", methods= ["GET", "POST"])
 def verify():
     user_id = int(request.args.get("user_id"))
@@ -57,8 +56,6 @@ def verify():
         else:
             flash("Can't verify your account", "danger")
             return render_template("verify.html", form=form, user_id=user_id)
-
-
 
 @users.route("/login", methods=["GET", "POST"])
 def login():
@@ -153,6 +150,7 @@ def staff():
         form.quantity.data = 1
     products, grand_total, grand_total_plus_shipping, quantity_total = handle_cart()
     return render_template("staff.html", title='Staff Action',form=form, products=products, grand_total=grand_total, quantity_total=quantity_total)
+
 @users.route("/api/user/search_by_phone", methods=["GET"])
 @login_required
 def process_search_user_by_phone():
