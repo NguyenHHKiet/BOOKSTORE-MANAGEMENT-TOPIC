@@ -71,27 +71,40 @@
 {% if  current_user.is_authenticated %}
  <div>
     <div>
-        <textarea class="form-control" placeholder="Nhập nội dung bình luận"></textarea>
+        <textarea id="commentId" class="form-control" placeholder="Nhập nội dung bình luận"></textarea>
     </div>
-    <input type="button" class="btn btn-danger" style="margin-top: 7px" value="Bình luận"/>
+    <input onclick="addComment({{ post.id }})" type="button" class="btn btn-danger" style="margin-top: 7px" value="Bình luận"/>
 
  </div>
     {% else %}
-    <a href="{{ url_for('users.login') }}">Đăng nhập để bình luận</a>
+    <a href="{{ url_for('users.login', next='books.bookDetail', book_id=post.id) }}">Đăng nhập để bình luận</a>
     {% endif %}
 
 <br></br>
-    <div class="row comment">
-        <div class="col-md-1 col-xs-4">
-            <img class="rounded-circle img-fluid" alt="demo"
-                    src="https://hanoispiritofplace.com/wp-content/uploads/2017/05/tai-anh-tinh-yeu-dep-5.jpg"/>
-        </div>
 
-        <div class="col-md-11 col-xs-8">
-            <p>San pham tuyet voi</p>
-            <p><em>2024-1-5</em></p>
-        </div>
+    {% if pages>1 %}
+            <ul class="pagination mt-1">
+                    {% for i in range(1, 1+pages) %}
+                    <li class="page-item"><a class="page-link" href="javascript:;" onclick="loadComments({{ post.id }}, {{ i }})">{{ i }}</a></li>
+                    {% endfor %}
+            </ul>
+    {% endif %}
+
+    <div id="commentArea">
+
+
     </div>
+
+
+    <script>
+        window.onload=function (){
+            loadComments({{ post.id }})
+            {#let date=document.getElementsByClassName('myDate')#}
+            {#for (let i=0; i<date.length;i++)#}
+            {#    date[i].innerText = moment(date[i].innerText).locale('vi').fromNow()#}
+            {##}
+        }
+    </script>
 
 {% endblock content %}
 

@@ -11,6 +11,7 @@ import datetime
 app = Flask(__name__)
 app.config.from_pyfile('../config.py')
 app.config['PAGE_SIZE'] = 6
+app.config['COMMENT_SIZE'] = 5
 @app.errorhandler(Exception)
 def global_exception_handler(e):
     print(e)
@@ -21,7 +22,7 @@ def global_exception_handler(e):
 # Create database connection object
 db = SQLAlchemy(app)
 
-from bookstore.models import Role, User, Configuration, Book, Category, Author, PaymentMethod
+from bookstore.models import Role, User, Configuration, Book, Category, Author, PaymentMethod, Comment
 
 # Setup Flask-Security
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
@@ -143,6 +144,8 @@ def build_sample_db():
                 active=True
             )
 
+
+
         # Book
         with open('bookstore/static/data_import/book_data.json', 'rb') as f:
             data = json.load(f)
@@ -207,6 +210,11 @@ def build_sample_db():
             utils.order_paid_incash(order.total_payment, order.id,
                                     order.initiated_date + datetime.timedelta(hours=rand_num))
             utils.order_delivered(order.id, order.initiated_date + datetime.timedelta(hours=rand_num + 1))
+
+    for i in range(8):
+                c = Comment(content=str(i+1), user_id=i+1, book_id=1)
+                db.session.add(c)
+                db.session.commit()
     return
 
 # ImportError: cannot import name 'url_decode' from 'werkzeug.urls'
