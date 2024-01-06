@@ -1,9 +1,11 @@
+import datetime
+
 from bookstore import db, app
 from bookstore.models import Comment
 from flask_login import current_user
 
 def add_comment_into_db(content, book_id):
-    c = Comment(content=content, book_id=book_id, user=current_user)
+    c = Comment(content=content, book_id=book_id, user=current_user, created_date=datetime.datetime.now())
     db.session.add(c)
     db.session.commit()
     return c
