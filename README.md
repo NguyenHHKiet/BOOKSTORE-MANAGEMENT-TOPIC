@@ -3,6 +3,7 @@
 Flask is a very lightweight Python Web Framework, easily helping beginners learn Python to create small websites.
 
 ![image](https://github.com/NguyenHHKiet/BOOKSTORE-MANAGEMENT-TOPIC/assets/52524133/4bdebee6-66e3-40e2-bc59-f188b1e8cf92)
+
 [Flask-Security](https://flask-security-too.readthedocs.io/en/stable/index.html) allows you to quickly add common security mechanisms to your Flask application.
 Many of these features are made possible by integrating various Flask extensions and libraries. They include:
 
@@ -17,9 +18,6 @@ Many of these features are made possible by integrating various Flask extensions
     <li>webauthn</li>
     <li>authlib</li>
 </ul>
-
-![Uploading image.png…]()
-
 
 ## Installation
 
