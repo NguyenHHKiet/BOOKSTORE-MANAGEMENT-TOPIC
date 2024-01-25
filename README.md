@@ -18,6 +18,9 @@ Many of these features are made possible by integrating various Flask extensions
     <li>authlib</li>
 </ul>
 
+![Uploading image.png…]()
+
+
 ## Installation
 
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
