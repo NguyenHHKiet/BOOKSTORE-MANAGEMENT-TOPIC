@@ -1,5 +1,7 @@
 # Python Flask Tutorial
 
+![image](image.jpg)
+
 Flask is a very lightweight Python Web Framework, easily helping beginners learn Python to create small websites.
 
 ![image](https://github.com/NguyenHHKiet/BOOKSTORE-MANAGEMENT-TOPIC/assets/52524133/4bdebee6-66e3-40e2-bc59-f188b1e8cf92)
